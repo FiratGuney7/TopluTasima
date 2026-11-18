@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luxury Flats for Sale in Luviya Project in Antalya · Transport card prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/vendor/leaflet-1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/transit.css">
+</head>
+<body>
+
+<!-- ================= PROTOTYPE CONTROLS (not part of the site) ================= -->
+<div class="proto-bar" role="region" aria-label="Prototype controls">
+  <div class="proto-inner">
+    <span class="proto-tag">PROTOTYPE</span>
+    <span class="proto-label">Transport card</span>
+    <div class="proto-switch" role="tablist" aria-label="Card variation">
+      <button role="tab" data-variant="A1" aria-selected="true"><b>A1</b> Sidebar card</button>
+      <button role="tab" data-variant="A2" aria-selected="false"><b>A2</b> Page section</button>
+      <button role="tab" data-variant="A3" aria-selected="false"><b>A3</b> Highlight band</button>
+    </div>
+    <div class="proto-switch proto-alt" role="tablist" aria-label="Other card variations">
+      <span class="proto-alt-label">Other</span>
+      <button role="tab" data-variant="B" aria-selected="false" title="Compact card"><b>B</b></button>
+      <button role="tab" data-variant="C" aria-selected="false" title="Full-width card"><b>C</b></button>
+    </div>
+    <span class="proto-label">Location</span>
+    <div class="proto-switch proto-loc" role="tablist" aria-label="Listing location precision">
+      <button role="tab" data-loc="exact" aria-selected="true">Exact</button>
+      <button role="tab" data-loc="approximate" aria-selected="false">Approximate</button>
+    </div>
+    <button class="proto-jump" type="button" id="proto-jump" title="Scroll to the card">Go to card ↓</button>
+    <span class="proto-spacer"></span>
+    <span class="proto-data" id="proto-data">Loading data…</span>
+    <button class="proto-notes-btn" type="button" id="proto-notes-btn" aria-expanded="false">Review notes</button>
+  </div>
+  <div class="proto-notes" id="proto-notes" hidden></div>
+</div>
+
+<!-- ================= SITE HEADER ================= -->
+<header class="general-header">
+  <div class="container header-top">
+    <div class="ht-left">
+      <span class="ht-item">⌄ English</span>
+      <span class="ht-item">⌄ EUR</span>
+      <span class="ht-item ht-login"><svg viewBox="0 0 16 16" width="13" height="13"><circle cx="8" cy="5" r="3.2" fill="#4596e6"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5z" fill="#4596e6"/></svg> LOGIN</span>
+    </div>
+    <div class="ht-right">
+      <span class="ht-call"><b>CALL NOW</b> +90 242 324 54 94</span>
+      <span class="ht-call"><b>MOBILE</b> +90 532 212 45 90</span>
+      <span class="wa-dot" aria-hidden="true"><svg viewBox="0 0 24 24" width="13" height="13"><path fill="#fff" d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3zm4.6 12.6c-.2.6-1.1 1.1-1.6 1.1-.4.1-.9.1-1.5-.1-.3-.1-.8-.3-1.4-.5-2.4-1-4-3.5-4.1-3.6-.1-.2-1-1.3-1-2.5s.6-1.8.9-2c.2-.3.5-.3.6-.3h.5c.1 0 .4 0 .5.4l.7 1.7c.1.1.1.3 0 .4l-.2.4-.3.4c-.1.1-.2.3-.1.5.1.2.6 1 1.3 1.6.9.8 1.6 1 1.9 1.1.2.1.4.1.5-.1l.7-.9c.2-.2.3-.2.5-.1l1.6.8c.2.1.4.2.4.3.1.1.1.6-.1 1.1z"/></svg></span>
+      <span class="btn-outline">FIND A PROPERTY</span>
+      <span class="btn-red">MAKE AN APPOINTMENT</span>
+    </div>
+  </div>
+  <div class="container header-main">
+    <a class="logo" href="#" aria-label="Antalya Homes">
+      <span class="logo-word"><b>ANTALYA</b><span class="logo-homes">HOMES</span><sup>®</sup></span>
+      <span class="logo-sub">LEADING REAL ESTATE COMPANY</span>
+    </a>
+    <nav class="main-nav" aria-label="Main">
+      <a href="#">BUY</a><a href="#">SELL</a><a href="#">RENT</a><a href="#">BUYING GUIDE</a><a href="#">CORPORATE</a><a href="#">BLOG</a><a href="#">CONTACT US</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ================= MAIN ================= -->
+<main class="general-main">
+  <div class="container">
+    <div class="breadcrumb">
+      <span class="goback">← GO BACK</span>
+      <ol>
+        <li>Home</li><li>Real Estate</li><li>Antalya</li><li>Muratpaşa</li><li>Live Rich in Luviya Project Flats for Sale in Antalya</li>
+      </ol>
+    </div>
+
+    <section class="detail-navigator"><h1 class="ilan-baslik">Live Rich in Luviya Project Flats for Sale in Antalya</h1></section>
+
+    <article class="detail-area">
+
+      <!-- ===== ROWS 1–2: gallery, price, reasons, description | agent, general details, prices (columns flow independently, like the live site) ===== -->
+      <div class="row">
+        <div class="left-block" id="col-l2">
+          <section class="gallery-top">
+            <div class="gallery-main">
+              <img id="gallery-main-img" src="assets/img/photo-01.jpg" alt="Luviya project, Antalya">
+              <button class="g-arrow g-prev" type="button" aria-label="Previous photo">‹</button>
+              <button class="g-arrow g-next" type="button" aria-label="Next photo">›</button>
+              <div class="g-counts">
+                <span title="Photos"><svg viewBox="0 0 16 16"><path d="M2 4h3l1-1.5h4L11 4h3v9H2z" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8.5" r="2.4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>27</span>
+                <span title="Floor plans"><svg viewBox="0 0 16 16"><path d="M2 2h12v12H2zM2 8h6V2M8 11v3" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>13</span>
+                <span title="Videos"><svg viewBox="0 0 16 16"><path d="M2 4h9v8H2zM11 7l3-2v6l-3-2" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>3</span>
+                <span title="Construction"><svg viewBox="0 0 16 16"><path d="M3 14V6l5-4 5 4v8zM6 14v-4h4v4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>14</span>
+              </div>
+            </div>
+            <div class="gallery-thumbs" id="gallery-thumbs"></div>
+          </section>
+          <ul class="property-location-detail">
+            <li>ANTALYA</li><li>MURATPAŞA</li><li>TOPÇULAR</li>
+          </ul>
+          <section class="ref">
+            <span class="refno">REF. No: AYT-4507</span>
+            <span class="ref-actions"><span class="pill">PRINT</span><span class="pill">SHARE</span><span class="pill">REPORT ⚑</span></span>
+          </section>
+          <section class="price-row">
+            <div class="baseprice"><strong>BASE PRICE</strong><span>309.000 USD</span></div>
+            <div class="price-main">
+              <div class="price-from"><small>FROM</small> <s>289.000 EUR</s></div>
+              <div class="price-now">281.000 EUR</div>
+              <div class="price-upd">Price update on 17.11.2026, 08.34</div>
+            </div>
+            <div class="button-block">
+              <span class="btn-cta">MAKE AN OFFER</span><span class="btn-cta">ASK AN AGENT</span><span class="btn-cta">ONLINE TOUR</span>
+              <div class="why">ⓘ Why are there different prices on different websites?</div>
+            </div>
+          </section>
+
+          <!-- Variation A3 slot: main column, right under the price -->
+          <div class="transit-slot" id="slot-A3" data-slot="A3"></div>
+
+          <div class="top-title"><span>TOP 3 REASONS TO BUY</span></div>
+          <ul class="reasons">
+            <li>Indoor and outdoor pool and parking lot</li>
+            <li>Close to the airport and tram</li>
+            <li>Prestigious and privileged mixed project</li>
+          </ul>
+
+          <div class="top-title"><span>PROPERTY DETAILS</span></div>
+          <div class="content" id="property-content">
+            <h2>Luxury Flats in Luviya Project in Antalya Muratpaşa</h2>
+            <p>The 1, 2, 3, and 4-bedroom high-ceiling flats in the project feature built-in kitchen appliances, ceiling-type air conditioners, a natural gas boiler, radiators, a cloakroom, steel door, spot and LED lighting, and an intercom system.</p>
+            <p>The Luviya project is built on 65,000 m² of land with a 390.000 m² construction area. It includes 730 flats, 104 branded residences, a shopping mall with 175 stores, 21 street shops, 35 offices, and 1 restaurant. The project also offers elevators, indoor and outdoor parking, electric charging stations, a sauna, caretaker service, 24/7 security, a gym, children’s playground, landscaped green areas, and indoor and outdoor pools.</p>
+            <div class="more-text">
+              <p>Luxury flats are located in Topçular, Muratpaşa. With its closeness to Termesos Boulevard, the area offers easy transportation and remains popular for long-term living and investment.</p>
+              <p>The flats for sale in Antalya are 13 km from Antalya Bus Terminal, 11 km from Konyaaltı and Lara Beaches, 8 km from International Antalya Airport, 5.8 km from Mark Antalya and the city center, 5.5 km from Mermerli Beach, 4.4 km from Mall of Antalya and Deepo Shopping Malls, and 2.8 km from Ikea and Agora Shopping Malls, 50 m to Tram stop. They are also close to daily amenities such as markets, shopping centers, hospitals, and banks.</p>
+            </div>
+          </div>
+          <div class="read-more"><span class="open" id="read-more">Read More</span></div>
+
+          <!-- Variation A2 slot: main column, a section after the description -->
+          <div class="transit-slot" id="slot-A2" data-slot="A2"></div>
+
+          <!-- Variation B slot: inside the main listing content, right after the description -->
+          <div class="transit-slot" id="slot-B" data-slot="B"></div>
+
+          <div class="property-area-link"><a href="#">More Apartments for sale in Muratpaşa <span>→</span></a></div>
+        </div>
+
+        <aside class="right-block" id="col-r2">
+          <p class="short-desc">Apartments in the Luviya project in Antalya offer 390.000 m² of space, including gyms, indoor/outdoor pools, and electric vehicle parking.</p>
+          <div class="agent">
+            <img src="assets/img/agent.jpg" alt="Armin Behroozifar" width="80" height="80">
+            <div>
+              <small>SALES AGENT</small>
+              <div class="agent-name">Armin Behroozifar</div>
+              <div class="agent-line">☏ +90 532 212 45 90</div>
+              <div class="agent-line">☏ +90 242 324 54 94</div>
+              <div class="agent-line">✉ sales@antalyahomes.com</div>
+            </div>
+            <span class="wa-big" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff" d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3zm4.6 12.6c-.2.6-1.1 1.1-1.6 1.1-.4.1-.9.1-1.5-.1-.3-.1-.8-.3-1.4-.5-2.4-1-4-3.5-4.1-3.6-.1-.2-1-1.3-1-2.5s.6-1.8.9-2c.2-.3.5-.3.6-.3h.5c.1 0 .4 0 .5.4l.7 1.7c.1.1.1.3 0 .4l-.2.4-.3.4c-.1.1-.2.3-.1.5.1.2.6 1 1.3 1.6.9.8 1.6 1 1.9 1.1.2.1.4.1.5-.1l.7-.9c.2-.2.3-.2.5-.1l1.6.8c.2.1.4.2.4.3.1.1.1.6-.1 1.1z"/></svg></span>
+          </div>
+          <div class="agent-tabs"><span class="on">ASK AGENT</span><span>ARRANGE VIEWING</span><span>OFFICE LOCATION</span></div>
+          <form class="agent-form" onsubmit="return false">
+            <input placeholder="Name Surname" disabled>
+            <div class="two"><input placeholder="Phone" disabled><input placeholder="E-mail" disabled></div>
+            <textarea placeholder="Message" disabled></textarea>
+            <label class="terms"><input type="checkbox" disabled> I have read and accept <u>Terms of Use</u>.</label>
+            <span class="btn-send">SEND</span>
+          </form>
+          <section class="options">
+            <div class="top-title"><span>GENERAL DETAILS</span></div>
+            <ul class="gd-grid">
+              <li><span class="gd-label">Realtor Fee</span><b>FREE</b></li>
+              <li><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span>Antalya / Muratpaşa</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M5 22V3h10v6h4v13zM8 6h2v2H8zm0 4h2v2H8zm0 4h2v2H8zm4-8h2v2h-2zm0 4h2v2h-2zm0 4h2v2h-2zm4-2h1v2h-1z"/></svg><span>10</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7h-2v-2H5v2zm3-10V5h5v3zm7 0V5h5v3z"/></svg><span>1+1, 2+1, 3+1, 4+1</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M7 3a3 3 0 0 0-3 3v6H2v2h1l1 4a3 3 0 0 0 3 2h10a3 3 0 0 0 3-2l1-4h1v-2H6V6a1 1 0 0 1 2 0h2a3 3 0 0 0-3-3z"/></svg><span>1, 2</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M2 18c2 0 2-1 4-1s2 1 4 1 2-1 4-1 2 1 4 1 2-1 4-1v2c-2 0-2 1-4 1s-2-1-4-1-2 1-4 1-2-1-4-1-2 1-4 1zM8 4a2 2 0 0 1 4 0v1h-2V4zm-2 0v12h2v-3h4v3h2V4a4 4 0 0 0-8 0zm2 7V8h4v3z"/></svg><span>Communal Pool, Indoor Pool</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 5h16v16H4zm0 4h16M8 3v4m8-4v4M7 12h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg><span>12 / 2028</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg><span>0-50 km</span></li>
+            </ul>
+          </section>
+
+          <section class="options prices">
+            <div class="top-title"><span>EVERY TIME CORRECT PRICES</span></div>
+            <ul class="price-list">
+              <li><div><b>1+1</b> Middle Floor<small>74 m²</small></div><div class="pr"><small>FROM <s>289.000 EUR</s></small><b>281.000 EUR</b></div><i>⌄</i></li>
+              <li><div><b>2+1</b> Middle Floor<small>111 m²</small></div><div class="pr"><small>FROM <s>419.000 EUR</s></small><b>378.000 EUR</b></div><i>⌄</i></li>
+              <li><div><b>3+1</b> Middle Floor<small>169 m²</small></div><div class="pr"><small>FROM</small><b>706.000 EUR</b></div><i>⌄</i></li>
+              <li><div><b>4+1</b> Middle Floor<small>248 m²</small></div><div class="pr"><small>FROM</small><b>1.035.000 EUR</b></div><i>⌄</i></li>
+            </ul>
+            <div class="ask-wrap"><span class="ask-btn-style">ASK FOR PRICE LIST AND PAYMENT PLAN</span></div>
+          </section>
+
+          <!-- Variation A1 slot: sidebar, below the room types / prices -->
+          <div class="transit-slot" id="slot-A1" data-slot="A1"></div>
+        </aside>
+      </div>
+
+      <!-- ===== Variation C slot: full width, below Property Details, before Features ===== -->
+      <div class="transit-slot slot-full" id="slot-C" data-slot="C"></div>
+
+      <!-- ===== ROW 3: features + request | trust + manager + costs ===== -->
+      <div class="row">
+        <div class="left-block" id="col-l3">
+          <div class="top-title"><span>FEATURES</span></div>
+          <div class="features" id="features"></div>
+
+          <div class="top-title mt"><span>REQUEST FURTHER DETAILS</span></div>
+          <form class="request-form" onsubmit="return false">
+            <input placeholder="Name Surname" disabled><input placeholder="E-mail" disabled>
+            <input placeholder="Phone" disabled><input placeholder="Country" disabled>
+            <textarea placeholder="Message" disabled></textarea>
+            <label class="terms"><input type="checkbox" disabled> I have read and accept <u>Terms of Use</u>.</label>
+            <span class="btn-send">SEND</span>
+          </form>
+        </div>
+
+        <aside class="right-block" id="col-r3">
+          <section class="trust">
+            <div class="trust-head"><span>EVERY TIME</span><b>BEST</b><span>PRICE</span></div>
+            <h4>UP-TO-DATE</h4><p>Our website and exchange rates are regularly and precisely updated.</p>
+            <h4>NO DOUBT</h4><p>We believe that “Honesty is the best policy”. What you see is what you get.</p>
+            <h4>WE GUARANTEE</h4><p>We always offer you the best price guarantee.</p>
+          </section>
+          <div class="top-title"><span>OFFICE MANAGER</span></div>
+          <div class="manager">
+            <img src="assets/img/manager.jpg" alt="Levent Bektaş" width="90" height="90">
+            <div><b>Levent Bektaş</b><span>Office Manager</span><small>✉ levent.bektas@tekce.com</small></div>
+          </div>
+          <div class="tk-container">
+            <div class="tk-baslik">Purchase Costs</div>
+            <div class="tk-sub">Estimated total cost ***</div>
+            <div class="tk-total">12.906 USD</div>
+            <div class="tk-pct">4.2% of the price</div>
+            <span class="tk-ac">Show breakdown</span>
+            <p class="tk-note">* 27.549 TRY: Converted to the listing's currency at the 18.11.2026 exchange rate.<br>* The amount depends on the nationality of the buyer and the seller.<br>** The buyer pays no commission on this listing.<br>Calculated on the starting price; it changes with the property you choose.<br>*** Figures are for guidance and may change; current legislation applies.</p>
+          </div>
+        </aside>
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer class="general-footer">
+  <div class="container footer-inner">
+    <div><h5>FAVORITE PAGES</h5><a>Buy Apartment in Turkey</a><a>Buy Villa in Turkey</a><a>Buy House in Antalya</a></div>
+    <div class="f-mid"><p>Copyright Antalya Homes © 2004-2026. All rights reserved.</p><p class="f-links"><a>Legal Notices &amp; Disclaimer</a><a>Terms of Use</a><a>Privacy Policy</a><a>Cookie Policy</a></p></div>
+    <div><h5>CALL US</h5><b class="f-phone">+90 242 324 54 94</b><h5>FOLLOW US</h5></div>
+  </div>
+  <div class="container proto-footnote">Prototype clone of the AYT-4507 listing page for internal design review. Listing text and photos © Antalya Homes. Not a production page.</div>
+</footer>
+
+<script src="assets/vendor/leaflet-1.9.4/leaflet.min.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="data/snapshot.js"></script>
+<script src="assets/js/transit-strings.js"></script>
+<script src="assets/js/transit-data.js"></script>
+<script src="assets/js/transit-ui.js"></script>
+</body>
+</html>

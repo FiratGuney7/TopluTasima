@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transit Card A Texts</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/vendor/leaflet-1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="../assets/css/transit.css">
+<style>
+  :root {
+    --ink: #192b43; --ink-2: #4a5868; --ink-3: #7b8794; --line: #e4e7eb; --soft: #f6f7f9;
+    --c-heading: #7c3aed; --c-sentence: #ea580c; --c-label: #c026d3; --c-action: #16a34a;
+    --c-unit: #e11d48; --c-notice: #b45309; --c-tooltip: #0891b2;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; font: 13px/1.5 "Open Sans", Arial, sans-serif; color: var(--ink); background: #fff; }
+  .page { max-width: 1060px; margin: 0 auto; padding: 28px 16px 40px; }
+  h1 { font-size: 18px; margin: 0 0 6px; }
+  h2 { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 10px; }
+  .rule { margin: 0 0 12px; color: var(--ink-2); }
+  .rule code { font: 12px Consolas, Menlo, monospace; background: #f1f3f6; padding: 0 5px; border-radius: 3px; }
+  section { margin-top: 28px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px 3px 4px; font-size: 12px; }
+  .legend i { width: 16px; height: 16px; border-radius: 50%; background: var(--c); }
+
+  .cards { display: grid; grid-template-columns: 389px 389px; gap: 24px; align-items: start; }
+  .states { grid-column: 1 / -1; }
+  .state-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+  .dialog-host { position: relative; height: 640px; }
+  .tc-dialog.is-inline { opacity: 1; transform: none; width: 100%; height: 100%; box-shadow: none; border: 1px solid var(--line); }
+
+  mark.i18n { --c: var(--c-label); background: color-mix(in srgb, var(--c) 12%, transparent); color: inherit; outline: 2px solid var(--c); outline-offset: 1px; border-radius: 3px; position: relative; padding: 0 1px; }
+  mark.i18n::after { content: attr(data-n); position: absolute; top: -11px; right: -8px; z-index: 5; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px; background: var(--c); color: #fff;
+    font: 700 10px/17px "Open Sans", Arial, sans-serif; text-align: center; letter-spacing: 0; text-transform: none; box-shadow: 0 0 0 2px #fff; }
+  .c-heading { --c: var(--c-heading); } .c-sentence { --c: var(--c-sentence); } .c-label { --c: var(--c-label); }
+  .c-action { --c: var(--c-action); } .c-unit { --c: var(--c-unit); } .c-notice { --c: var(--c-notice); } .c-tooltip { --c: var(--c-tooltip); }
+  .tc-legend mark.i18n::after { top: -14px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); border-bottom: 2px solid var(--line); padding: 6px 8px; }
+  td { border-bottom: 1px solid var(--line); padding: 7px 8px; vertical-align: top; }
+  tr { break-inside: avoid; }
+  .no { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 20px; border-radius: 10px; color: #fff; font-weight: 700; font-size: 11px; padding: 0 5px; background: var(--c); }
+  .cms { font: 11px Consolas, Menlo, monospace; }
+  .en { font-weight: 600; }
+  .ph { color: var(--ink-3); font-weight: 400; }
+  .tag { font-size: 10px; color: var(--c-tooltip); border: 1px solid #a5dbe6; border-radius: 3px; padding: 0 4px; margin-left: 4px; white-space: nowrap; }
+
+  @page { size: A4 landscape; margin: 10mm; }
+  @media print {
+    .page { max-width: none; padding: 0; }
+    .break { break-before: page; }
+    .dialog-host { height: 600px; }
+    .cards { zoom: .7; }                /* both cards + states on one A4 landscape page */
+    .rule, .legend { font-size: 11px; }
+  }
+  @media screen and (max-width: 900px) { .cards, .state-row { grid-template-columns: 1fr; } .dialog-host { height: 880px; } table { display: block; overflow-x: auto; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Transit card (A) — texts to translate</h1>
+  <p class="rule">Every outlined text has a number; the list at the end gives its CMS title (<b>Settings › Fixed Contents</b>) and the English text. Keep <code>{placeholders}</code> unchanged. Stop names, line numbers and directions are not translated.</p>
+  <div class="legend" id="legend"></div>
+
+  <section>
+    <div class="cards">
+      <div><h2>Card · exact location</h2><div id="cardExact"></div></div>
+      <div><h2>Card · approximate location</h2><div id="cardApprox"></div></div>
+      <div class="states"><h2>Loading · error</h2><div class="state-row"><div id="stLoading"></div><div id="stError"></div></div></div>
+    </div>
+  </section>
+
+  <section class="break">
+    <h2>Expanded view · exact location</h2>
+    <div class="dialog-host" id="dlgExact"></div>
+  </section>
+
+  <section class="break">
+    <h2>Expanded view · approximate location</h2>
+    <div class="dialog-host" id="dlgApprox"></div>
+  </section>
+
+  <section class="break">
+    <h2>All texts</h2>
+    <table id="strings">
+      <thead><tr><th>#</th><th>CMS title</th><th>English</th><th>Where</th><th>Max</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</div>
+
+<script>window.TRANSIT_ANNOTATE = true;</script>
+<script src="../assets/vendor/leaflet-1.9.4/leaflet.min.js"></script>
+<script src="../data/snapshot.js"></script>
+<script src="../assets/js/transit-strings.js"></script>
+<script src="../assets/js/transit-data.js"></script>
+<script src="../assets/js/transit-ui.js"></script>
+<script>
+(async function () {
+  const S = window.TRANSIT_STRINGS;
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const CATS = { heading: "Title", sentence: "Sentence", label: "Label", action: "Button", unit: "Unit / distance", notice: "Note", tooltip: "Tooltip (mouse-over)" };
+  document.getElementById("legend").innerHTML = Object.entries(CATS).map(([k, n]) => `<span class="c-${k}"><i></i>${n}</span>`).join("");
+
+  document.querySelector("#strings tbody").innerHTML = S.map((s, i) => `<tr class="c-${s.cat}">
+      <td><span class="no">${i + 1}</span></td>
+      <td class="cms">${esc(s.cms)}</td>
+      <td class="en">${esc(s.en).replace(/\{(\w+)\}/g, '<span class="ph">{$1}</span>')}${s.cat === "tooltip" ? '<span class="tag">on mouse-over</span>' : ""}</td>
+      <td>${esc(s.where)}</td>
+      <td>${s.max || ""}</td></tr>`).join("");
+
+  const UI = window.TransitUI;
+  const exact = await UI.load({ locationMode: "exact" });
+  const approx = await UI.load({ locationMode: "approximate" });
+  UI.renderA(document.getElementById("cardExact"), exact);
+  UI.renderA(document.getElementById("cardApprox"), approx);
+  document.getElementById("stLoading").innerHTML = UI.loadingHTML();
+  document.getElementById("stError").innerHTML = UI.errorHTML();
+  for (const [id, data, stop] of [
+    ["dlgExact", exact, exact.stops.find((s) => s.mode === "bus" && s.stopCode)],
+    ["dlgApprox", approx, approx.stops.find((s) => !s.inArea)],
+  ]) {
+    const host = document.getElementById(id);
+    host.innerHTML = UI.dialogHTML(data, UI.headline(data), "is-inline");
+    const ex = UI.mountExplorer(host, data, stop && stop.id);
+    setTimeout(() => ex.scrollToSelected(), 300);
+  }
+  document.documentElement.dataset.ready = "1";
+})();
+</script>
+</body>
+</html>

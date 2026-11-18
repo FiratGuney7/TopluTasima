@@ -1,0 +1,17 @@
+{
+  "property": { "ref": "AYT-4507", "lat": 36.893629, "lon": 30.7545758 },
+  "approximate": {
+    "note": "Demo of a listing whose public location is approximate. Same 1,000 m circle as antalyahomes.com (google.maps.Circle, radius 1000, red stroke 2 px, fill opacity 0.2). The centre is offset ~320 m from the real point; in production it must be generated server-side so the browser never receives the real coordinates.",
+    "lat": 36.8909,
+    "lon": 30.7533,
+    "areaRadiusMeters": 1000,
+    "searchRadiusMeters": 1300
+  },
+  "radiusMeters": 1000,
+  "routeClipBBox": [36.870, 30.728, 36.912, 30.780],
+  "overpassEndpoints": [
+    "https://overpass-api.de/api/interpreter",
+    "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
+  ],
+  "osrmFoot": "https://routing.openstreetmap.de/routed-foot/route/v1/foot"
+}

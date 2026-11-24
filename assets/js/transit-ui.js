@@ -1,13 +1,8 @@
 /*
- * Transport card UI: card variations rendered from the SAME data object.
- * Shared building blocks (map, stop list, stop detail, header) are used by every
- * variation; they differ only in layout, density and placement.
- *
- *   A1 Sidebar card        – sidebar, below "Every time correct prices" (+ expanded view)
- *   A2 Page section        – main column, after the description (+ expanded view)
- *   A3 Highlight band      – main column, under the price (+ expanded view)
- *   B  Compact card        – secondary: main column, after the description
- *   C  Full-width card     – secondary: below Property Details, before Features
+ * Location map section of the listing page, with public transport as a side feature.
+ * Two variations of the same section, rendered from the SAME data object:
+ *   H  Yatay (horizontal) – main column, right above Features; wide map
+ *   V  Dikey (vertical)   – sidebar, below "Every time correct prices"; taller, narrower map
  *
  * Visual system: Antalya Homes palette (navy #192B43, red #DA0021, blue #4596E6),
  * Open Sans, one icon set (Material Icons paths, Apache-2.0), light base map.
@@ -54,7 +49,6 @@
     return new Date(iso).toLocaleString("en-GB", o);
   }
   const modeLabel = (m) => tp(m === "tram" ? "tip.tramStop" : "tip.busStop");
-  const fmtHours = (h) => h.replace(/^Mo-Su\s*/, `${tp("detail.daily")} `).replace(/-(\d)/g, "–$1");
   // Source data is often ALL CAPS ("ASPENDOS BLV-7", "MEYDAN - VARSAK ALTIAYAK").
   // Display it in Turkish-aware title case; mixed-case strings are left alone.
   function nice(s) {
@@ -79,6 +73,7 @@
     recenter: "M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z",
     map: "M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z",
     arrow: "M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z",
+    transit: "M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2.23l2-2H14l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-7H6V6h5v4zm2 0V6h5v4h-5zm3.5 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z",
   };
   const svg = (name, cls = "") => `<svg class="tc-svg ${cls}" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="${P[name]}"/></svg>`;
   const badge = (mode, size = "md") => `<span class="tc-badge tc-badge-${size} is-${mode}">${svg(P[mode] ? mode : "route")}</span>`;
@@ -95,98 +90,18 @@
     return stop.lines.slice(0, max - 1).map(chip).join("") +
       `<span class="tc-chip is-more" title="${esc(rest.map((l) => l.ref).join(", "))}">+${rest.length}</span>`;
   }
-  // Distance shown in rows. Exact: walking route (else labelled straight-line). Approximate: from the area.
-  function dist(stop, data, cls = "") {
-    if (data.approximate) {
-      if (stop.inArea) return `<span class="tc-dist ${cls}"><span class="tc-inarea">${t("dist.inArea")}</span></span>`;
-      return `<span class="tc-dist ${cls}"><b>${t("dist.about", { distance: fmtDist(round50(stop.areaDist), true) })}</b><small>${t("dist.fromArea")}</small></span>`;
-    }
-    if (stop.walk) {
-      return `<span class="tc-dist ${cls}" title="${fmtDist(stop.walk.distance, true)} · ${tp("detail.straight")} ${fmtDist(stop.straight, true)}">
-        <b>${t("dist.minutes", { minutes: mins(stop.walk.duration) })}</b><small>${svg("walk")}${fmtDist(stop.walk.distance)}</small></span>`;
-    }
-    return `<span class="tc-dist ${cls}"><b>${fmtDist(stop.straight)}</b><small>${t("dist.straight")}</small></span>`;
-  }
-  function stopDetail(stop, data) {
-    const kv = (k, v) => `<div class="tc-kv"><span>${k}</span><b>${v}</b></div>`;
-    const metrics = data.approximate
-      ? kv(t("detail.distance"), stop.inArea ? t("detail.inside") : t("detail.fromArea", { distance: fmtDist(round50(stop.areaDist), true) }))
-      : (stop.walk ? kv(t("detail.walk"), `${t("dist.minutes", { minutes: mins(stop.walk.duration) })} · ${fmtDist(stop.walk.distance)}`) : "") +
-        kv(t("detail.straight"), fmtDist(stop.straight));
-    const lines = stop.lines.length
-      ? `<ul class="tc-dirs">${stop.lines.map((l) => `<li>${chip(l)}<div>${l.directions.map((d) => `<span>${d.from && d.to ? `${esc(nice(d.from))} → ${esc(nice(d.to))}` : esc(niceDir(d.name))}${d.hours ? ` <em>${esc(fmtHours(d.hours))}</em>` : ""}</span>`).join("")}</div></li>`).join("")}</ul>`
-      : `<p class="tc-note">${t("detail.noLines")}</p>`;
-    return `<div class="tc-detail">
-      <div class="tc-kvs">${metrics}${stop.stopCode ? kv(t("detail.stopNo"), esc(stop.stopCode)) : ""}</div>
-      ${stop.lines.length ? `<div class="tc-label">${t("detail.lines")}</div>` : ""}
-      ${lines}
-    </div>`;
-  }
   // One short disclaimer for every card and both location types, plus the required OpenStreetMap attribution.
   const disclaimer = () => `<p class="tc-disclaimer">${svg("info")}<span>${t("notice.disclaimer")} ${t("notice.attribution", { osm: '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>' })}</span></p>`;
 
-  function keyStats(data) {
-    const list = data.approximate ? data.stops.filter((s) => s.inArea) : data.stops;
-    return {
-      tram: list.filter((s) => s.mode === "tram").length,
-      bus: list.filter((s) => s.mode === "bus").length,
-      lines: new Set(list.flatMap((s) => s.lines.map((l) => l.ref))).size,
-      scope: data.approximate ? "in this area" : `within ${data.config.radiusMeters / 1000} km`,
-    };
-  }
-  // Tinted icon tile: soft mode-coloured background, mode-coloured glyph.
-  const tile = (kind, icon) => `<span class="tc-tile is-${kind}">${svg(icon)}</span>`;
-  function statStrip(data, cls = "") {
-    const st = keyStats(data);
-    const cell = (kind, icon, n, label) =>
-      `<div class="tc-stat">${tile(kind, icon)}<span class="tc-stat-text"><b class="tc-stat-num">${n}</b><span class="tc-stat-label">${label}</span></span></div>`;
-    const inline = cls.includes("is-inline");
-    const scopeKey = data.approximate ? "scope.area" : "scope.radius";
-    const km = data.config.radiusMeters / 1000;
-    // Captions are invariant ("Tram stops" under the number) so they never need plural forms.
-    return `${inline ? "" : `<div class="tc-label tc-stats-scope">${t(scopeKey, { km })}</div>`}
-      <div class="tc-stats ${cls}" aria-label="${tp(scopeKey, { km })}">
-      ${cell("tram", "tram", st.tram, t("stat.tram"))}
-      ${cell("bus", "bus", st.bus, t("stat.bus"))}
-      ${cell("line", "route", st.lines, t("stat.lines"))}
-    </div>`;
-  }
-  function headline(data) {
-    const first = data.stops[0];
-    if (!first) return t("headline.none");
-    if (data.approximate) {
-      // Approximate: say what serves the AREA (no distances to a hidden point, no counts to inflect).
-      const tramRefs = [...new Set(data.stops.filter((s) => s.inArea && s.mode === "tram").flatMap((s) => s.lines.map((l) => l.ref)))];
-      if (tramRefs.length) return t("headline.area.tram", { lines: esc(tramRefs.join(" · ")) });
-      if (data.stops.some((s) => s.inArea && s.mode === "bus")) return t("headline.area.bus");
-      return t("headline.area.near", { distance: fmtDist(round50(first.areaDist), true) });
-    }
-    const m = first.mode === "tram" ? "tram" : "bus";
-    const stop = esc(nice(first.displayName));
-    if (first.walk) return t(`headline.walk.${m}`, { stop, minutes: mins(first.walk.duration) });
-    return t(`headline.dist.${m}`, { stop, distance: fmtDist(first.straight, true) });
-  }
   const nearestOf = (data, mode) => data.stops.find((s) => s.mode === mode) || null;
-  function legend(data) {
-    return `<div class="tc-legend" aria-hidden="true">
-      ${data.approximate ? `<span><i class="lg-area"></i>${t("legend.area")}</span>` : `<span><i class="lg-prop">${svg("home")}</i>${t("legend.property")}</span>`}
-      <span>${badge("tram", "xs")}${t("mode.tram")}</span>
-      <span>${badge("bus", "xs")}${t("mode.bus")}</span>
-      ${data.approximate ? "" : `<span><i class="lg-walk"></i>${t("detail.walk")}</span>`}
-      <span><i class="lg-line"></i>${t("legend.lineRoute")}</span>
-    </div>`;
-  }
-
   // ---------------- map ----------------
   // Framing presets: keep the property (or the area) centred and choose the zoom
   // by intent, not by "fit every stop".
   //   exact        – walking scale: the focus stops comfortably in view, zoom clamped
   //   approximate  – the whole area circle with a margin (its shape says "somewhere in here")
   const FRAME = {
-    preview: { exact: [14.75, 16], approx: [13, 15], pad: [100, 96], approxPad: 24 },
-    section: { exact: [15, 16.25], approx: [12.5, 15], pad: [120, 120], approxPad: 48 },
-    thumb: { exact: [14.75, 16], approx: [12.5, 14.5], pad: [56, 56], approxPad: 10 },
-    large: { exact: [14.5, 16.25], approx: [13, 15.5], pad: [140, 140], approxPad: 80 },
+    mapTall: { exact: [14.75, 15.5], approx: [12.25, 14.5], pad: [60, 160], approxPadXY: [70, 110] },
+    mapWide: { exact: [15, 15.75], approx: [12.5, 14.75], pad: [160, 80], approxPadXY: [120, 110] },
   };
   // Tile servers that also answer when the page is opened straight from disk (file://).
   // tile.openstreetmap.org refuses requests without a Referer ("Access blocked"), so it is not used.
@@ -214,15 +129,48 @@
   function createMap(el, data, opts = {}) {
     const O = data.origin;
     const interactive = opts.interactive !== false;
-    const preset = FRAME[opts.preset || "large"];
+    const preset = FRAME[opts.preset || "mapWide"];
     const map = L.map(el, {
       zoomControl: false, dragging: interactive, scrollWheelZoom: false, doubleClickZoom: interactive,
       boxZoom: false, keyboard: interactive, touchZoom: interactive, zoomSnap: 0.25, attributionControl: true,
+      minZoom: 11, maxZoom: 18, // never zoom out to a meaningless region or into empty tiles
     });
     // Base map, visually softened in CSS (.tc-tiles) so stops and lines carry the colour.
     // window.TRANSIT_NO_TILES: schematic map without tiles.
     if (!window.TRANSIT_NO_TILES) addTiles(map);
     map.attributionControl.setPrefix("");
+    // Scrolling the page must never get stuck on the map: zoom with Ctrl/⌘ + scroll,
+    // pan with two fingers on phones. A short hint explains it when someone tries otherwise.
+    if (interactive && opts.cooperative) {
+      const hint = L.DomUtil.create("div", "tm-hint", el);
+      hint.setAttribute("aria-hidden", "true");
+      let timer = 0, lastZoom = 0;
+      const show = (key) => {
+        hint.textContent = tp(key);
+        hint.classList.add("is-on");
+        clearTimeout(timer);
+        timer = setTimeout(() => hint.classList.remove("is-on"), 1400);
+      };
+      const mac = /Mac|iPhone|iPad/.test(navigator.platform || "");
+      el.addEventListener("wheel", (e) => {
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          hint.classList.remove("is-on");
+          const now = Date.now();
+          if (now - lastZoom < 180) return;
+          lastZoom = now;
+          map.setZoomAround(map.mouseEventToContainerPoint(e), map.getZoom() + (e.deltaY < 0 ? 0.5 : -0.5));
+        } else {
+          show(mac ? "hint.cmdZoom" : "hint.ctrlZoom");
+        }
+      }, { passive: false });
+      if (L.Browser.mobile) {
+        map.dragging.disable();
+        el.addEventListener("touchstart", (e) => { if (e.touches.length > 1) map.dragging.enable(); else map.dragging.disable(); }, { passive: true });
+        el.addEventListener("touchmove", (e) => { if (e.touches.length === 1) show("hint.twoFingers"); }, { passive: true });
+        el.addEventListener("touchend", () => map.dragging.disable(), { passive: true });
+      }
+    }
     if (opts.scale) L.control.scale({ metric: true, imperial: false, maxWidth: 90, position: "bottomleft" }).addTo(map);
 
     const routeLayer = L.layerGroup().addTo(map);
@@ -241,10 +189,15 @@
         }),
         zIndexOffset: 1000, keyboard: false, interactive: false,
       }).addTo(map);
+      L.marker([O.lat, O.lon], {
+        icon: L.divIcon({ className: "tm-wrap", html: '<span class="tm-halo"></span>', iconSize: [46, 46], iconAnchor: [23, 23] }),
+        zIndexOffset: -100, keyboard: false, interactive: false,
+      }).addTo(map);
     }
 
     const markers = new Map();
     const emph = opts.emphasis ? new Set(opts.emphasis) : null;
+    const groups = { transport: L.layerGroup().addTo(map) };
     const bigIcon = (s) => L.divIcon({ className: "tm-wrap", html: `<div class="tm-stop is-${s.mode}">${svg(s.mode)}</div>`, iconSize: [26, 26], iconAnchor: [13, 13] });
     const dotIcon = (s) => L.divIcon({ className: "tm-wrap", html: `<div class="tm-dot is-${s.mode}"></div>`, iconSize: [10, 10], iconAnchor: [5, 5] });
     for (const s of data.stops) {
@@ -258,8 +211,15 @@
         m.bindTooltip(`<b>${esc(nice(s.displayName))}</b><span>${modeLabel(s.mode)}</span>`, { direction: "top", offset: [0, -14], className: "tm-tip" });
         m.on("click", () => opts.onSelect(s.id));
       }
-      m.addTo(map);
+      m.addTo(groups.transport);
       markers.set(s.id, m);
+    }
+    function setVisible(layer, on) {
+      const g = groups[layer]; if (!g) return;
+      if (on && !map.hasLayer(g)) g.addTo(map); else if (!on && map.hasLayer(g)) map.removeLayer(g);
+      if (!on && currentId) {
+        routeLayer.clearLayers(); walkLayer.clearLayers(); if (label) { label.remove(); label = null; }
+      }
     }
 
     // Zoom + "back to the property" controls (interactive maps only)
@@ -285,7 +245,7 @@
       focusStops = focus;
       let z;
       if (data.approximate) {
-        z = map.getBoundsZoom(L.latLng(O.lat, O.lon).toBounds(O.areaRadius * 2), false, L.point(preset.approxPad, preset.approxPad));
+        z = map.getBoundsZoom(L.latLng(O.lat, O.lon).toBounds(O.areaRadius * 2), false, L.point(...(preset.approxPadXY || [preset.approxPad, preset.approxPad])));
         z = Math.max(preset.approx[0], Math.min(z, preset.approx[1]));
       } else {
         // mirror each focus stop around the property so the property stays centred
@@ -295,6 +255,9 @@
         z = Math.max(preset.exact[0], Math.min(z, preset.exact[1]));
       }
       map.setView([O.lat, O.lon], z, { animate: false });
+      // A panel over part of the map: shift the view so the property sits in the middle of the visible part.
+      const off = opts.offset ? opts.offset() : null;
+      if (off && (off[0] || off[1])) map.panBy([-off[0], -off[1]], { animate: false });
     }
 
     function originBounds() {
@@ -349,15 +312,25 @@
         if (!opts.labels || currentId !== id || destroyed) return;
         if (label) label.remove();
         const pt = map.latLngToContainerPoint([s.lat, s.lon]);
-        const left = pt.x > map.getSize().x * 0.55;
+        // Away from the property pin, unless that side runs off the map.
+        const home = map.latLngToContainerPoint([O.lat, O.lon]);
+        let left = pt.x < home.x;
+        if (!left && pt.x > map.getSize().x - 170) left = true;
+        if (left && pt.x < 170 + (opts.insets ? opts.insets()[0][0] : 0)) left = false;
         label = L.tooltip({ permanent: true, direction: left ? "left" : "right", offset: [left ? -18 : 18, 0], className: `tm-label ${left ? "is-left" : ""}`, interactive: false })
           .setLatLng([s.lat, s.lon]).setContent(`<span class="tm-label-txt">${esc(nice(s.displayName))}</span>`).addTo(map);
       };
       const b = originBounds().extend([s.lat, s.lon]);
-      if (pan && !map.getBounds().pad(-0.12).contains(b)) {
+      // Free part of the map (a panel may cover some of it): [top-left, bottom-right] insets in px.
+      const ins = opts.insets ? opts.insets() : [[0, 0], [0, 0]];
+      const size = map.getSize();
+      const tl = map.latLngToContainerPoint(b.getNorthWest()), br = map.latLngToContainerPoint(b.getSouthEast());
+      const m = 0.12 * Math.min(size.x, size.y);
+      const visible = tl.x >= ins[0][0] + m && tl.y >= ins[0][1] + m && br.x <= size.x - ins[1][0] - m && br.y <= size.y - ins[1][1] - m;
+      if (pan && !visible) {
         // Bring the stop into view without losing the property / area, then label it.
         map.once("moveend", placeLabel);
-        map.flyToBounds(b, { padding: [70, 70], maxZoom: map.getZoom(), duration: 0.5 });
+        map.flyToBounds(b, { paddingTopLeft: [ins[0][0] + 60, ins[0][1] + 60], paddingBottomRight: [ins[1][0] + 60, ins[1][1] + 60], maxZoom: map.getZoom(), duration: 0.5 });
       } else {
         placeLabel();
       }
@@ -367,379 +340,212 @@
     const ro = typeof ResizeObserver === "function" ? new ResizeObserver(() => { if (!destroyed) map.invalidateSize({ pan: true, animate: false }); }) : null;
     if (ro) ro.observe(el);
 
-    return { map, frame, select, invalidate: () => map.invalidateSize(), destroy: () => { destroyed = true; if (ro) ro.disconnect(); map.remove(); } };
-  }
-  // Focus set for the large maps: everything within ~10 minutes' walk (min 4 stops).
-  const largeFocus = (data) => {
-    const near = data.stops.filter((s) => s.walk ? s.walk.duration <= 600 : s.straight <= 700);
-    return (near.length >= 4 ? near : data.stops.slice(0, 4)).slice(0, 12);
-  };
-
-  // ---------------- lists ----------------
-  function stopRow(s, data, selectedId, opts = {}) {
-    const sel = s.id === selectedId;
-    return `<li class="tc-row ${sel ? "is-sel" : ""}" data-stop="${s.id}">
-      <button type="button" class="tc-row-btn" aria-expanded="${sel}">
-        ${badge(s.mode, opts.badge || "md")}
-        <span class="tc-row-main">
-          ${opts.modePrefix ? `<span class="tc-row-mode">${t(s.mode === "tram" ? "mode.tram" : "mode.bus")}</span>` : ""}
-          <span class="tc-row-name">${esc(nice(s.displayName))}</span>
-          <span class="tc-row-lines">${chips(s, opts.maxChips || 6)}</span>
-        </span>
-        ${dist(s, data)}
-      </button>
-      ${sel && opts.inlineDetail ? stopDetail(s, data) : ""}
-    </li>`;
-  }
-  function groupedList(data, selectedId, opts = {}) {
-    return [["tram", t("stat.tram")], ["bus", t("stat.bus")], ["other", "Other stops"]].map(([mode, label]) => {
-      const list = data.stops.filter((s) => s.mode === mode);
-      if (!list.length) return "";
-      return `<section class="tc-group"><h5 class="tc-group-h">${tile(mode, P[mode] ? mode : "route")}<span class="tc-group-name">${label}</span><span class="tc-group-count">${list.length}</span></h5>
-        <ul class="tc-list">${list.map((s) => stopRow(s, data, selectedId, opts)).join("")}</ul></section>`;
-    }).join("");
-  }
-
-  // Shared "explorer": list + large map with selection, used by C and A's expanded view.
-  function mountExplorer(root, data, initialId) {
-    let selected = initialId;
-    const listEl = root.querySelector(".tc-x-list");
-    const ctl = createMap(root.querySelector(".tc-x-map"), data, { onSelect: (id) => setSel(id, true), labels: true, preset: "large" });
-    const focus = largeFocus(data);
-    const draw = () => { listEl.innerHTML = groupedList(data, selected, { inlineDetail: true }); };
-    function setSel(id, fromMap) {
-      selected = id; draw(); ctl.select(id);
-      const r = listEl.querySelector(`[data-stop="${id}"]`);
-      if (r && fromMap) r.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    // Every line serving the stops, drawn at once ("Show lines"); one line can be highlighted.
+    const linesLayer = L.layerGroup();
+    function showLines(on, focusRef = null) {
+      linesLayer.clearLayers();
+      if (!on) { if (map.hasLayer(linesLayer)) map.removeLayer(linesLayer); return; }
+      const byRef = new Map();
+      for (const st of data.stops) for (const l of st.lines) {
+        const e = byRef.get(l.ref) || { ref: l.ref, mode: l.mode, keys: new Set() };
+        (l.geomKeys || []).forEach((k) => e.keys.add(k));
+        byRef.set(l.ref, e);
+      }
+      const order = [...byRef.values()].sort((a, b) => (a.ref === focusRef) - (b.ref === focusRef)); // highlighted line on top
+      for (const e of order) {
+        const hi = focusRef === e.ref, dim = focusRef && !hi;
+        for (const gk of e.keys) {
+          const g = data.routeGeometry[gk];
+          if (!g || !g.segments.length) continue;
+          if (hi) L.polyline(g.segments, { color: "#fff", weight: 8, opacity: 0.95, interactive: false }).addTo(linesLayer);
+          L.polyline(g.segments, { color: COLOR[e.mode] || COLOR.other, weight: hi ? 5 : 3, opacity: dim ? 0.15 : hi ? 0.95 : 0.5, interactive: false }).addTo(linesLayer);
+        }
+      }
+      linesLayer.addTo(map);
     }
-    listEl.addEventListener("click", (e) => { const b = e.target.closest(".tc-row-btn"); if (b) setSel(b.parentElement.dataset.stop, false); });
-    ctl.frame(focus);
-    requestAnimationFrame(() => { ctl.invalidate(); ctl.frame(focus); ctl.select(selected, { pan: false }); });
-    draw();
-    return {
-      ctl,
-      select: (id) => setSel(id, true),
-      // Scroll only the list (never the page) so the selected stop sits under the sticky group header.
-      scrollToSelected: () => {
-        const r = listEl.querySelector(`[data-stop="${selected}"]`);
-        if (r) listEl.scrollTop += r.getBoundingClientRect().top - listEl.getBoundingClientRect().top - 44;
-      },
-    };
-  }
-  const explorerHTML = (data) => `<div class="tc-x">
-      <div class="tc-x-list" tabindex="-1"></div>
-      <div class="tc-x-mapwrap"><div class="tc-map tc-x-map"></div>${legend(data)}</div>
-    </div>`;
 
+    return { map, frame, select, setVisible, showLines, invalidate: () => map.invalidateSize(), destroy: () => { destroyed = true; if (ro) ro.disconnect(); map.remove(); } };
+  }
   // ---------------- states ----------------
   const loadingHTML = () => `<div class="tc tc-card tc-state"><div class="tc-spinner"></div><div><b>${t("state.loading")}</b></div></div>`;
   const errorHTML = () => `<div class="tc tc-card tc-state is-error" role="status"><span class="tc-badge tc-badge-md is-error">${svg("info")}</span>
       <div><b>${t("state.errorTitle")}</b><br><span class="tc-muted">${t("state.errorBody")}</span>
       <div><button type="button" class="tc-btn tc-btn-secondary tc-retry">${t("action.tryAgain")}</button></div></div></div>`;
 
-  // Expanded view of card A (also rendered inline by the translation guide).
-  const dialogHTML = (data, head, extraCls = "") => `<section class="tc tc-dialog ${extraCls}" role="dialog" aria-modal="true" aria-labelledby="tc-dialog-title">
-      <header class="tc-dialog-head">
-        <div class="tc-dialog-titles"><div class="tc-kicker">${t("kicker")}</div><h3 class="tc-title" id="tc-dialog-title">${head}</h3></div>
-        <div class="tc-dialog-stats">${statStrip(data, "is-inline")}</div>
-        <button type="button" class="tc-iconbtn tc-close" aria-label="Close">${svg("close")}</button>
-      </header>
-      ${explorerHTML(data)}
-      <footer class="tc-dialog-foot">${disclaimer()}</footer>
-    </section>`;
-
-  // ======================================================================
-  // A — Neighbourhood card: three variations of the same card, same texts,
-  // same expanded view (map + full list). They differ in placement, visual
-  // treatment and inner layout.
-  //   A1  Sidebar card     – right column, below "Every time correct prices"
-  //   A2  Page section     – main column, a section of the listing like "Features"
-  //   A3  Highlight band   – main column, right under the price, before the reasons
-  // ======================================================================
-  // Expanded view (modal) shared by every A variation.
-  function expander(data, head) {
-    let modal = null;
-    function open(stopId) {
-      close();
-      const opener = document.activeElement;
-      const wrap = document.createElement("div");
-      wrap.className = "tc-modal";
-      wrap.innerHTML = `<div class="tc-modal-back"></div>${dialogHTML(data, head)}`;
-      document.body.appendChild(wrap);
-      document.body.classList.add("tc-noscroll");
-      const ex = mountExplorer(wrap, data, stopId);
-      ex.scrollToSelected();
-      wrap.querySelector(".tc-close").addEventListener("click", close);
-      wrap.querySelector(".tc-modal-back").addEventListener("click", close);
-      const onKey = (e) => { if (e.key === "Escape") close(); };
-      document.addEventListener("keydown", onKey);
-      requestAnimationFrame(() => wrap.classList.add("is-open"));
-      wrap.querySelector(".tc-close").focus({ preventScroll: true });
-      modal = { wrap, ctl: ex.ctl, onKey, opener };
-    }
-    function close() {
-      if (!modal) return;
-      modal.ctl.destroy();
-      document.removeEventListener("keydown", modal.onKey);
-      modal.wrap.remove();
-      document.body.classList.remove("tc-noscroll");
-      if (modal.opener && modal.opener.focus) modal.opener.focus({ preventScroll: true });
-      modal = null;
-    }
-    return { open, close };
-  }
-  // Clicks: a stop opens the expanded view on that stop; [data-open] elements open it on the nearest stop.
-  function wireOpen(slot, data, ex) {
-    const first = data.stops[0];
-    slot.addEventListener("click", (e) => {
-      if (e.target.closest(".leaflet-control-attribution a")) return;
-      const row = e.target.closest("[data-stop]");
-      if (row) return ex.open(row.dataset.stop);
-      if (e.target.closest("[data-open]")) ex.open(first && first.id);
-    });
-    slot.querySelectorAll('[data-open][role="button"]').forEach((el) => el.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); ex.open(first && first.id); }
-    }));
-  }
-  function previewMap(el, data, focus, preset) {
-    const m = createMap(el, data, { interactive: false, scale: preset !== "thumb", emphasis: focus.map((s) => s.id), preset });
-    const first = data.stops[0];
-    m.frame(focus);
-    if (first && !data.approximate) m.select(first.id, { pan: false });
-    return m;
-  }
   const focusOf = (data) => [nearestOf(data, "tram"), nearestOf(data, "bus")].filter(Boolean);
-  const modeWord = (s) => t(s.mode === "tram" ? "mode.tram" : "mode.bus");
 
-  // ---------- A1: sidebar card ----------
-  function renderA(slot, data) {
-    const head = headline(data);
-    const focus = focusOf(data);
-    slot.innerHTML = `<section class="tc tc-card tc-hood ${data.approximate ? "is-approx" : ""}" aria-label="${tp("kicker")}">
-      <div class="tc-hood-preview" role="button" tabindex="0" data-open aria-label="Open the transport map">
-        <div class="tc-map tc-hood-map"></div>
-        <span class="tc-pill tc-hood-expand">${svg("expand")}${t("action.expandMap")}</span>
-      </div>
-      <div class="tc-hood-body">
-        <div class="tc-kicker">${t("kicker")}</div>
-        <h4 class="tc-title">${head}</h4>
-        ${statStrip(data)}
-        <div class="tc-label">${t(data.approximate ? "section.inArea" : "section.nearest")}</div>
-        <ul class="tc-list tc-list-compact">${focus.map((s) => stopRow(s, data, null, { modePrefix: true, maxChips: 5, badge: "sm" })).join("")}</ul>
-        <button type="button" class="tc-btn tc-btn-secondary tc-btn-block tc-hood-open" data-open>${svg("map")}${t("action.explore")}</button>
-        ${disclaimer()}
-      </div>
-    </section>`;
-    const preview = previewMap(slot.querySelector(".tc-hood-map"), data, focus, "preview");
-    const ex = expander(data, head);
-    wireOpen(slot, data, ex);
-    return { destroy: () => { ex.close(); preview.destroy(); } };
-  }
+  // ---------- location map section (H / V) ----------
+  // The map is the feature: a section of the listing (site-style title) that is
+  // mostly map. Public transport is a secondary feature on it:
+  //   - stops on the map (the nearest ones as markers, the rest as small dots),
+  //   - a small box in a corner with an on/off switch and the nearest tram and bus stop,
+  //   - a popup on the map with walking time and lines when a stop is clicked.
+  //   H  Yatay: main column, wide map right above "Features"
+  //   V  Dikey: sidebar, map under "Every time correct prices"
+  function renderMapArea(slot, data, variant, initial = {}) {
+    const near = focusOf(data);
+    const others = Math.max(0, data.stops.length - near.length);
+    // Public transport starts switched off: the section opens as a clean location map.
+    let transitOn = initial.transit === true;
+    let linesOn = false, lineFocus = null;
+    // Every line serving the stops on the map: tram first, then natural order (35, 46, 46A, 511…).
+    const allLines = [...new Map(data.stops.flatMap((s) => s.lines).map((l) => [l.ref, l])).values()]
+      .sort((a, b) => (a.mode === "tram" ? 0 : 1) - (b.mode === "tram" ? 0 : 1) || a.ref.localeCompare(b.ref, "en", { numeric: true }));
 
-  // ---------- A2: page section (flat, site-style heading; map left, summary right) ----------
-  function renderA2(slot, data) {
-    const head = headline(data);
-    const focus = focusOf(data);
-    const st = keyStats(data);
-    const km = data.config.radiusMeters / 1000;
-    const scopeKey = data.approximate ? "scope.area" : "scope.radius";
-    const stat = (kind, icon, n, key) => `<span class="tc-sec-stat">${tile(kind, icon)}<span class="tc-sec-stat-text"><b>${n}</b><span>${t(key)}</span></span></span>`;
-    const stopCard = (s) => `<li class="tc-sec-stop is-${s.mode}" data-stop="${s.id}">
-        <button type="button" class="tc-sec-stop-btn">
-          ${badge(s.mode, "md")}
-          <span class="tc-row-main">
-            <span class="tc-row-mode">${modeWord(s)}</span>
-            <span class="tc-row-name">${esc(nice(s.displayName))}</span>
-            <span class="tc-row-lines">${chips(s, 6)}</span>
-          </span>
-          ${dist(s, data)}
-        </button>
-      </li>`;
-    slot.innerHTML = `<section class="tc tc-sec ${data.approximate ? "is-approx" : ""}" aria-label="${tp("kicker")}">
-      <div class="top-title"><span>${t("kicker")}</span></div>
-      <div class="tc-sec-grid">
-        <div class="tc-sec-mapbox" role="button" tabindex="0" data-open aria-label="Open the transport map">
-          <div class="tc-map tc-sec-map"></div>
-          <span class="tc-pill tc-sec-expand">${svg("expand")}${t("action.expandMap")}</span>
-        </div>
-        <div class="tc-sec-side">
-          <h3 class="tc-title">${head}</h3>
-          <div class="tc-sec-scope">${t(scopeKey, { km })}</div>
-          <div class="tc-sec-stats" aria-label="${tp(scopeKey, { km })}">
-            ${stat("tram", "tram", st.tram, "stat.tram")}${stat("bus", "bus", st.bus, "stat.bus")}${stat("line", "route", st.lines, "stat.lines")}
+    const nearRow = (s) => `<li class="tc-mx-row" data-stop="${s.id}"><button type="button" class="tc-mx-btn">
+        ${badge(s.mode, "xs")}
+        <span class="tc-mx-name">${esc(nice(s.displayName))}</span>
+        <span class="tc-mx-lines">${chips(s, 3)}</span>
+        <span class="tc-mx-dist">${data.approximate
+          ? (s.inArea ? t("dist.inArea") : t("dist.about", { distance: fmtDist(round50(s.areaDist), true) }))
+          : s.walk ? `${svg("walk")}${t("dist.minutes", { minutes: mins(s.walk.duration) })}` : fmtDist(s.straight)}</span>
+      </button></li>`;
+
+    slot.innerHTML = `<section class="tc tc-mx tc-mx-${variant} ${data.approximate ? "is-approx" : ""}" aria-label="${tp("loc.title")}">
+      <div class="top-title"><span>${t("loc.title")}</span></div>
+      <div class="tc-mx-stage">
+        <div class="tc-map tc-mx-map"></div>
+        <div class="tc-mx-box ${transitOn ? "is-on" : ""}">
+          <div class="tc-mx-head">
+            ${svg("transit", "tc-mx-icon")}<span>${t("layer.transport")}</span>
+            <button type="button" class="tc-switch" role="switch" aria-checked="${transitOn}" aria-label="${tp("layer.transport")}"><i></i></button>
           </div>
-          <div class="tc-label">${t(data.approximate ? "section.inArea" : "section.nearest")}</div>
-          <ul class="tc-sec-stops">${focus.map(stopCard).join("")}</ul>
-          <button type="button" class="tc-btn tc-btn-block tc-sec-btn" data-open>${svg("map")}${t("action.explore")}</button>
+          <div class="tc-mx-body">
+            <ul class="tc-mx-list">${near.map(nearRow).join("")}</ul>
+            ${others ? `<p class="tc-mx-more">${t("transit.moreStops", { n: others })}</p>` : ""}
+            ${allLines.length ? `<div class="tc-mx-lineswrap">
+              <button type="button" class="tc-mx-linesbtn" aria-pressed="false">${svg("route")}<span>${t("transit.showLines")}</span><b>${allLines.length}</b></button>
+              <div class="tc-mx-lineset" hidden>
+                <p class="tc-mx-hint">${t("transit.pickLine")}</p>
+                <div class="tc-mx-chips">${allLines.map((l) => `<button type="button" class="tc-chip is-${esc(l.mode)} tc-linechip" data-ref="${esc(l.ref)}" aria-pressed="false" title="${esc(`${l.ref}: ${l.directions.map((d) => (d.from && d.to ? `${nice(d.from)} → ${nice(d.to)}` : niceDir(d.name))).join("  ·  ")}`)}">${esc(l.ref)}</button>`).join("")}</div>
+              </div>
+            </div>` : ""}
+          </div>
         </div>
       </div>
       ${disclaimer()}
     </section>`;
-    const preview = previewMap(slot.querySelector(".tc-sec-map"), data, focus, "section");
-    const ex = expander(data, head);
-    wireOpen(slot, data, ex);
-    return { destroy: () => { ex.close(); preview.destroy(); } };
-  }
 
-  // ---------- A3: highlight band (navy, compact, on the first screen) ----------
-  function renderA3(slot, data) {
-    const head = headline(data);
-    const focus = focusOf(data);
-    const st = keyStats(data);
-    const km = data.config.radiusMeters / 1000;
-    const scopeKey = data.approximate ? "scope.area" : "scope.radius";
-    const ticket = (s) => `<li class="tc-band-ticket" data-stop="${s.id}">
-        <button type="button" class="tc-band-ticket-btn">
-          ${badge(s.mode, "sm")}
-          <span class="tc-row-main">
-            <span class="tc-row-mode">${modeWord(s)}</span>
-            <span class="tc-row-name">${esc(nice(s.displayName))}</span>
-            <span class="tc-row-lines">${chips(s, 4)}</span>
-          </span>
-          ${dist(s, data)}
-        </button>
-      </li>`;
-    const num = (n, key) => `<span class="tc-band-num"><b>${n}</b><span>${t(key)}</span></span>`;
-    slot.innerHTML = `<section class="tc tc-band ${data.approximate ? "is-approx" : ""}" aria-label="${tp("kicker")}">
-      <div class="tc-band-thumb" role="button" tabindex="0" data-open aria-label="Open the transport map">
-        <div class="tc-map tc-band-map"></div>
-        <span class="tc-pill tc-band-expand">${svg("expand")}${t("action.expandMap")}</span>
-      </div>
-      <div class="tc-band-body">
-        <div class="tc-band-top">
-          <div class="tc-band-titles"><div class="tc-kicker">${t("kicker")}</div><h3 class="tc-title">${head}</h3></div>
-          <div class="tc-band-nums" aria-label="${tp(scopeKey, { km })}">
-            <span class="tc-band-scope">${t(scopeKey, { km })}</span>
-            <span class="tc-band-numrow">${num(st.tram, "stat.tram")}${num(st.bus, "stat.bus")}${num(st.lines, "stat.lines")}</span>
-          </div>
-        </div>
-        <ul class="tc-band-tickets">${focus.map(ticket).join("")}</ul>
-        <div class="tc-band-foot">
-          ${disclaimer()}
-          <button type="button" class="tc-btn tc-band-btn" data-open>${svg("map")}${t("action.explore")}</button>
-        </div>
-      </div>
-    </section>`;
-    const preview = previewMap(slot.querySelector(".tc-band-map"), data, focus, "thumb");
-    const ex = expander(data, head);
-    wireOpen(slot, data, ex);
-    return { destroy: () => { ex.close(); preview.destroy(); } };
-  }
-
-  // ======================================================================
-  // B — Compact horizontal card, nearest stop first
-  // ======================================================================
-  function renderB(slot, data) {
-    let selected = data.stops[0] && data.stops[0].id;
-    let expanded = false;
-    slot.innerHTML = `<section class="tc tc-card tc-compact" aria-label="Public transport nearby">
-      <div class="tc-compact-main">
-        <div class="tc-map tc-compact-map"></div>
-        <div class="tc-compact-info">
-          <div class="tc-kicker">Public transport nearby</div>
-          <div class="tc-compact-hero"></div>
-          <div class="tc-compact-next"></div>
-        </div>
-      </div>
-      <div class="tc-compact-all" hidden></div>
-      <footer class="tc-compact-foot">
-        <button type="button" class="tc-link tc-compact-toggle" aria-expanded="false"><span>Show all ${data.stops.length} stops</span>${svg("chevron")}</button>
-        ${disclaimer()}
-      </footer>
-    </section>`;
-    const hero = slot.querySelector(".tc-compact-hero"), next = slot.querySelector(".tc-compact-next"), all = slot.querySelector(".tc-compact-all"), tgl = slot.querySelector(".tc-compact-toggle");
-    const ctl = createMap(slot.querySelector(".tc-compact-map"), data, {
-      onSelect: (id) => setSel(id), preset: "preview", labels: true, compactControls: true, scale: true,
-      emphasis: data.stops.slice(0, 4).map((s) => s.id), // small map: 4 nearest as full markers, the rest as dots
+    const root = slot.querySelector(".tc-mx");
+    const box = root.querySelector(".tc-mx-box");
+    // Part of the map the transport box covers (bottom-left): keep popups and pans clear of it.
+    const insets = () => {
+      const m = root.querySelector(".tc-mx-map").getBoundingClientRect(), b = box.getBoundingClientRect();
+      return [[0, 0], [0, Math.max(0, m.bottom - b.top)]]; // 0 when the open box sits below the map
+    };
+    const ctl = createMap(root.querySelector(".tc-mx-map"), data, {
+      onSelect: (id) => openStop(id), labels: false, compactControls: variant === "V", cooperative: true,
+      emphasis: near.map((s) => s.id), preset: variant === "V" ? "mapTall" : "mapWide", insets,
     });
-    ctl.frame(data.stops.slice(0, 3));
-    let detailOpen = false;
-    function draw() {
-      const s = data.stops.find((x) => x.id === selected);
-      // Hero: the selected (by default the nearest) stop in a mode-tinted panel.
-      hero.innerHTML = `<div class="tc-hero is-${s.mode}">
-          <div class="tc-hero-top">${badge(s.mode, "lg")}
-            <div class="tc-hero-text"><span class="tc-row-mode">${s.rank === 1 && !data.approximate ? `Nearest · ${modeLabel(s.mode)}` : modeLabel(s.mode)}</span>
-            <h4 class="tc-hero-name">${esc(nice(s.displayName))}</h4></div>
-            ${dist(s, data, "is-lg")}
-          </div>
-          <details class="tc-more" ${detailOpen ? "open" : ""}>
-            <summary><span class="tc-row-lines">${chips(s, 7)}</span><span class="tc-link">Directions${svg("chevron")}</span></summary>
-            ${stopDetail(s, data)}
-          </details>
-        </div>`;
-      hero.querySelector("details").addEventListener("toggle", (e) => { detailOpen = e.target.open; });
-      const others = data.stops.filter((x) => x.id !== selected).slice(0, 3);
-      next.innerHTML = `<div class="tc-label">Also nearby</div><ul class="tc-list tc-list-compact">${others.map((o) => stopRow(o, data, null, { maxChips: 4, badge: "sm" })).join("")}</ul>`;
-      if (expanded) all.innerHTML = groupedList(data, selected);
+    const map = ctl.map;
+    let popup = null;
+
+    function popupHTML(s) {
+      const walk = data.approximate
+        ? (s.inArea ? t("detail.inside") : t("detail.fromArea", { distance: fmtDist(round50(s.areaDist), true) }))
+        : s.walk ? `${svg("walk")}${t("dist.minutes", { minutes: mins(s.walk.duration) })} · ${fmtDist(s.walk.distance)}` : `${fmtDist(s.straight)} ${t("dist.straight")}`;
+      const dirs = s.lines.length
+        ? `<ul class="tc-dirs">${s.lines.map((l) => `<li>${chip(l)}<div>${l.directions.map((d) => `<span>${d.from && d.to ? `${esc(nice(d.from))} → ${esc(nice(d.to))}` : esc(niceDir(d.name))}</span>`).join("")}</div></li>`).join("")}</ul>`
+        : `<p class="tc-note">${t("detail.noLines")}</p>`;
+      return `<div class="tc tc-pop">
+        <div class="tc-pop-head">${badge(s.mode, "sm")}<div><span class="tc-row-mode">${t(s.mode === "tram" ? "mode.tram" : "mode.bus")}${s.stopCode ? ` · ${t("detail.stopNo")} ${esc(s.stopCode)}` : ""}</span><b>${esc(nice(s.displayName))}</b></div></div>
+        <div class="tc-pop-walk">${walk}</div>
+        ${s.lines.length ? `<div class="tc-label">${t("detail.lines")}</div>` : ""}
+        <div class="tc-pop-dirs">${dirs}</div>
+      </div>`;
     }
-    function setSel(id) { selected = id; draw(); ctl.select(id); }
-    slot.addEventListener("click", (e) => {
-      const b = e.target.closest(".tc-row-btn");
-      if (b) { setSel(b.parentElement.dataset.stop); return; }
-      if (e.target.closest(".tc-compact-toggle")) {
-        expanded = !expanded; all.hidden = !expanded;
-        tgl.setAttribute("aria-expanded", expanded);
-        tgl.querySelector("span").textContent = expanded ? "Hide stops" : `Show all ${data.stops.length} stops`;
-        draw();
-      }
+    function openStop(id) {
+      const s = data.stops.find((x) => x.id === id);
+      if (!s) return;
+      if (!transitOn) setTransit(true);
+      ctl.select(id, { pan: false });
+      const ins = insets();
+      popup = L.popup({ className: "tm-pop", maxWidth: 300, minWidth: 240, offset: [0, -12], autoPanPaddingTopLeft: [ins[0][0] + 16, 16], autoPanPaddingBottomRight: [16, ins[1][1] + 16] })
+        .setLatLng([s.lat, s.lon]).setContent(popupHTML(s)).openOn(map);
+      // Re-run Leaflet's auto-pan once the popup has its final size (fonts, chips).
+      requestAnimationFrame(() => { if (popup && popup.isOpen() && popup._adjustPan) { popup.update(); popup._adjustPan(); } });
+      root.querySelectorAll(".tc-mx-row").forEach((r) => r.classList.toggle("is-sel", r.dataset.stop === id));
+    }
+    map.on("popupclose", () => {
+      root.querySelectorAll(".tc-mx-row").forEach((r) => r.classList.remove("is-sel"));
+      resetSelection();
     });
-    draw(); ctl.select(selected, { pan: false });
-    // The map stretches to the info column's height; re-centre once layout has settled.
-    const reframe = () => { ctl.invalidate(); ctl.frame(data.stops.slice(0, 3)); };
-    requestAnimationFrame(reframe);
-    return ctl;
+    // Default: the walking path to the nearest stop (exact location only), nothing else highlighted.
+    function resetSelection() {
+      const first = data.stops[0];
+      if (transitOn && first && !data.approximate) ctl.select(first.id, { pan: false }); else ctl.select(null, { pan: false });
+    }
+    function setLines(on, focus = null) {
+      linesOn = on; lineFocus = on ? focus : null;
+      const btn = root.querySelector(".tc-mx-linesbtn");
+      if (!btn) return;
+      btn.setAttribute("aria-pressed", String(on));
+      btn.querySelector("span").innerHTML = t(on ? "transit.hideLines" : "transit.showLines");
+      root.querySelector(".tc-mx-lineset").hidden = !on;
+      root.querySelectorAll(".tc-linechip").forEach((c) => {
+        const sel = c.dataset.ref === lineFocus;
+        c.setAttribute("aria-pressed", String(sel));
+        c.classList.toggle("is-dim", !!lineFocus && !sel);
+      });
+      ctl.showLines(on, lineFocus);
+    }
+    // The box is anchored to the bottom of the map with its header at the bottom, so it opens
+    // upwards: the header stays where it was clicked and the content grows above it.
+    // Size changes are animated (FLIP: measure, change, play from the old size).
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function resizeBox(change) {
+      const overlayBefore = getComputedStyle(box).position === "absolute";
+      const from = box.getBoundingClientRect();
+      change();
+      if (reduceMotion || !overlayBefore || getComputedStyle(box).position !== "absolute") return;
+      const to = box.getBoundingClientRect();
+      if (Math.abs(to.width - from.width) < 1 && Math.abs(to.height - from.height) < 1) return;
+      box.getAnimations().forEach((a) => a.cancel());
+      box.animate([{ width: `${from.width}px`, height: `${from.height}px` }, { width: `${to.width}px`, height: `${to.height}px` }],
+        { duration: 260, easing: "cubic-bezier(.2,.8,.2,1)" });
+    }
+    function setTransit(on) {
+      transitOn = on;
+      resizeBox(() => {
+        if (!on) setLines(false);
+        box.classList.toggle("is-on", on);
+      });
+      box.querySelector(".tc-switch").setAttribute("aria-checked", String(on));
+      ctl.setVisible("transport", on);
+      if (!on) map.closePopup();
+      resetSelection();
+    }
+    root.addEventListener("click", (e) => {
+      if (e.target.closest(".leaflet-control-attribution a")) return;
+      if (e.target.closest(".tc-switch, .tc-mx-head")) return setTransit(!transitOn);
+      if (e.target.closest(".tc-mx-linesbtn")) return resizeBox(() => setLines(!linesOn));
+      const lc = e.target.closest(".tc-linechip");
+      if (lc) return setLines(true, lineFocus === lc.dataset.ref ? null : lc.dataset.ref);
+      const r = e.target.closest(".tc-mx-row");
+      if (r) openStop(r.dataset.stop);
+    });
+
+    // The property (or the approximate-area circle) opens exactly in the middle of the map.
+    ctl.setVisible("transport", transitOn);
+    const settle = () => { ctl.invalidate(); ctl.frame(near); resetSelection(); };
+    settle();
+    requestAnimationFrame(settle);
+    if (initial.stopId) requestAnimationFrame(() => openStop(initial.stopId));
+    return { destroy: () => ctl.destroy(), select: (id) => openStop(id), transit: (on) => setTransit(on), lines: (on, ref) => setLines(on, ref) };
   }
 
-  // ======================================================================
-  // C — Full-width card: list on one side, map on the other
-  // ======================================================================
-  function renderC(slot, data) {
-    // Header: title + the nearest stop of each mode at a glance, counts on the right.
-    const near = [nearestOf(data, "tram"), nearestOf(data, "bus")].filter(Boolean).map((s) => `
-      <button type="button" class="tc-near" data-stop="${s.id}">
-        ${badge(s.mode, "xs")}
-        <span class="tc-near-mode">${data.approximate ? (s.mode === "tram" ? "Tram" : "Bus") : `Nearest ${s.mode === "tram" ? "tram" : "bus"}`}</span>
-        <b>${esc(nice(s.displayName))}</b>
-        <span class="tc-near-dist">${data.approximate ? (s.inArea ? "in area" : `~${fmtDist(round50(s.areaDist))} from area`) : s.walk ? `${mins(s.walk.duration)} min walk` : fmtDist(s.straight)}</span>
-      </button>`).join("");
-    slot.innerHTML = `<section class="tc tc-card tc-full" aria-label="Public transportation">
-      <header class="tc-full-head">
-        <div class="tc-full-titles"><div class="tc-kicker">Public transportation</div><h3 class="tc-title">${headline(data)}</h3>
-          <div class="tc-nears">${near}</div></div>
-        <div class="tc-full-stats">${statStrip(data, "is-inline")}</div>
-      </header>
-      ${explorerHTML(data)}
-      <footer class="tc-full-foot">${disclaimer()}</footer>
-    </section>`;
-    const ex = mountExplorer(slot, data, data.stops[0] && data.stops[0].id);
-    slot.querySelectorAll(".tc-near").forEach((b) => b.addEventListener("click", () => ex.select(b.dataset.stop)));
-    return ex.ctl;
-  }
+  const renderH = (slot, data, initial) => renderMapArea(slot, data, "H", initial);
+  const renderV = (slot, data, initial) => renderMapArea(slot, data, "V", initial);
 
   // ======================================================================
   // Prototype controller: switchers, data badge, review notes
   // ======================================================================
-  const RENDER = { A1: renderA, A2: renderA2, A3: renderA3, B: renderB, C: renderC };
-  let current = "A1", locationMode = "exact", controller = null, DATA = null, ERROR = null;
-
-  // The full-width card (C) needs a break between the two-column rows. For the
-  // other variations the columns flow continuously, like on the live site.
-  function arrangeColumns(fullWidth) {
-    const pairs = [["col-l2", "col-l3"], ["col-r2", "col-r3"]].map(([a, b]) => [document.getElementById(a), document.getElementById(b)]);
-    for (const [top, bottom] of pairs) {
-      if (!top || !bottom) continue;
-      if (!bottom.dataset.marked) { [...bottom.children].forEach((c) => (c.dataset.row3 = "1")); bottom.dataset.marked = "1"; }
-      if (fullWidth) [...top.children].filter((c) => c.dataset.row3).forEach((c) => bottom.appendChild(c));
-      else [...bottom.children].forEach((c) => top.appendChild(c));
-      bottom.parentElement.hidden = !fullWidth;
-    }
-  }
+  const RENDER = { H: renderH, V: renderV };
+  let current = "H", locationMode = "exact", controller = null, DATA = null, ERROR = null;
 
   function setVariant(v, { scroll = true } = {}) {
-    if (!RENDER[v]) v = "A1";
+    if (!RENDER[v]) v = "H";
     current = v;
-    arrangeColumns(v === "C");
     document.querySelectorAll(".proto-switch [data-variant]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.variant === v)));
     if (controller) { try { controller.destroy(); } catch (e) { /* ignore */ } controller = null; }
     document.querySelectorAll(".transit-slot").forEach((s) => { s.innerHTML = ""; s.classList.remove("is-active"); });
@@ -755,9 +561,10 @@
   }
   function readHash() {
     const h = location.hash.slice(1);
-    const m = h.match(/^(A[123]|B|C|A)/i);
-    const v = m ? m[1].toUpperCase() : "A1";
-    return { v: v === "A" ? "A1" : v, approx: /approx/i.test(h) };
+    // #H / #V (older links: #A3 = H, #A1 = V)
+    const m = h.match(/^(H|V|A3|A1)/i);
+    const v = m ? { A3: "H", A1: "V" }[m[1].toUpperCase()] || m[1].toUpperCase() : "H";
+    return { v, approx: /approx/i.test(h) };
   }
 
   function dataBadge() {
@@ -767,44 +574,6 @@
     const s = DATA.status;
     el.className = `proto-data ${s.source === "live" ? "is-live" : "is-cache"}`;
     el.textContent = s.source === "live" ? `● Live OSM data · ${fmtTime(s.retrievedAt)}` : `● Cached data · ${fmtTime(s.retrievedAt, false)}`;
-  }
-
-  function reviewNotes() {
-    const box = document.getElementById("proto-notes");
-    if (ERROR) { box.innerHTML = `<div class="pn-grid"><section><h5>Data</h5><p>${esc(ERROR.message)}</p></section></div>`; return; }
-    if (!DATA) { box.innerHTML = ""; return; }
-    const d = DATA, s = d.status;
-    const withLines = d.stops.filter((x) => x.lines.length);
-    const allLines = [...new Map(d.stops.flatMap((x) => x.lines).map((l) => [l.ref, l])).values()];
-    const v = d.validation;
-    const claim = d.approximate
-      ? `<section><h5>Approximate-location mode</h5>
-          <p>The listing exposes only an area (${d.origin.areaRadius} m circle, same as the live site; centre offset from the real point). Distances are measured from the area, walking times are hidden, and the real coordinates are never used in the browser.</p></section>`
-      : `<section><h5>Listing claim check</h5>
-          <p>Description: <q>${esc(v.claim.text)}</q></p>
-          ${v.stop ? `<p>Nearest tram stop: <b>${esc(nice(v.stop.displayName))}</b>, ${fmtDist(v.straight)} straight-line${v.walk != null ? `, ${fmtDist(v.walk)} walking` : ""}.</p>` : ""}
-          <p class="pn-verdict pn-${v.verdict === "consistent" ? "ok" : "warn"}">${v.verdict === "consistent" ? "Consistent" : v.verdict === "discrepancy" ? "Discrepancy" : "No tram stop found"}</p></section>`;
-    box.innerHTML = `<div class="pn-grid">
-      ${claim}
-      <section><h5>Data</h5><ul>
-        <li>OSM stops via Overpass (${esc(new URL(s.endpoint).host)}), ${s.source === "live" ? "live" : "cached"} ${fmtTime(s.retrievedAt)}${s.liveError ? `<br><span class="pn-muted">Live failed: ${esc(s.liveError)}</span>` : ""}</li>
-        ${d.approximate ? "" : `<li>Walking routes: OSRM foot profile (FOSSGIS), ${s.walking === "live" ? "live" : `cached ${fmtTime(s.walkingRetrievedAt)}`}</li>`}
-        <li>Base map: OpenStreetMap data, HOT tile style from OSM France (desaturated in CSS); also loads when the page is opened from disk.</li>
-      </ul></section>
-      <section><h5>Source merge (KentKart first, OSM fallback)</h5>
-        ${d.harmonization ? `<ul>
-          <li>${d.harmonization.matched} stops in both, ${d.harmonization.kentkartOnly} only in KentKart, ${d.harmonization.osmOnly} only in OSM.</li>
-          <li>Lines from KentKart at ${d.harmonization.linesKentkart} stops, from OSM at ${d.harmonization.linesOsm}, none at ${d.harmonization.stopsNoLines}.</li>
-          <li>${allLines.length} lines: ${allLines.map(chip).join(" ")}</li>
-        </ul>
-        <p class="pn-muted">KentKart = third-party GTFS generated from KentKart (Mobility Database mdb-3406), service ${esc(d.gtfsSource.validFrom)}–${esc(d.gtfsSource.validTo)}. Not official; licence to be confirmed. “TEST” agency lines left out: ${esc(d.gtfsSource.excludedRoutes.join(", "))}.</p>`
-        : `<p>${withLines.length} of ${d.stops.length} stops have lines in OSM.</p>`}</section>
-      <section><h5>Method</h5><ul class="pn-muted">
-        <li>${d.approximate ? "Distance from area = distance to the circle edge, rounded to 50 m." : "Walk = OSRM route incl. access to the path network; straight-line = haversine."}</li>
-        <li>Maps keep the property / area centred; zoom chosen per purpose.</li></ul>
-        <p class="pn-muted">Test: <a href="?data=live${location.hash}">live data</a> · <a href="?data=fail${location.hash}">failure state</a> · <a href="./${location.hash}">cached (default)</a></p>
-      </section>
-    </div>`;
   }
 
   async function load() {
@@ -817,7 +586,7 @@
       console.error(e);
       ERROR = e;
     }
-    dataBadge(); reviewNotes();
+    dataBadge();
     setVariant(current, { scroll: false });
   }
 
@@ -833,17 +602,22 @@
     document.getElementById("proto-jump").addEventListener("click", () => {
       const s = document.getElementById(`slot-${current}`); if (s) s.scrollIntoView({ behavior: "smooth", block: "start" });
     });
-    const nb = document.getElementById("proto-notes-btn"), notes = document.getElementById("proto-notes");
-    nb.addEventListener("click", () => { notes.hidden = !notes.hidden; nb.setAttribute("aria-expanded", String(!notes.hidden)); });
+    // Gallery location button: no full-screen map any more; it takes you to the map area on the page.
+    const gm = document.getElementById("g-map");
+    if (gm) gm.addEventListener("click", () => {
+      const s = document.getElementById(`slot-${current}`); if (!s) return;
+      s.scrollIntoView({ behavior: "smooth", block: "center" });
+      s.classList.remove("is-active"); void s.offsetWidth; s.classList.add("is-active");
+    });
     document.addEventListener("click", (e) => { if (e.target.closest(".tc-retry")) load(); });
     document.addEventListener("keydown", (e) => {
       if (e.target.closest("input, textarea, [contenteditable]") || e.ctrlKey || e.metaKey || e.altKey) return;
       if (document.querySelector(".tc-modal")) return;
-      const v = { "1": "A1", "2": "A2", "3": "A3", "4": "B", "5": "C" }[e.key];
+      const v = { "1": "H", "2": "V" }[e.key];
       if (v) setVariant(v);
     });
     const h = readHash();
-    current = RENDER[h.v] ? h.v : "A1";
+    current = RENDER[h.v] ? h.v : "H";
     if (h.approx) {
       locationMode = "approximate";
       document.querySelectorAll(".proto-switch [data-loc]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.loc === "approximate")));
@@ -851,8 +625,8 @@
     load().then(() => { if (location.hash) document.getElementById(`slot-${current}`).scrollIntoView({ block: "start" }); });
   }
 
-  // Card A building blocks for the translation guide (docs/transit-card-a-translation-guide.html).
-  window.TransitUI = { renderA, dialogHTML, mountExplorer, headline, loadingHTML, errorHTML, load: (opts) => TD.load(opts) };
+  // Building blocks for the translator sheet (docs/transit-card-a-texts.html).
+  window.TransitUI = { renderH, renderV, loadingHTML, errorHTML, load: (opts) => TD.load(opts) };
   if (!document.getElementById("proto-data")) return; // loaded as a library, not the prototype page
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

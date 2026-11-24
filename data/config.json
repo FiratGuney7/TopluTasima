@@ -11,7 +11,8 @@
   "routeClipBBox": [36.870, 30.728, 36.912, 30.780],
   "overpassEndpoints": [
     "https://overpass-api.de/api/interpreter",
-    "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
+    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter"
   ],
   "osrmFoot": "https://routing.openstreetmap.de/routed-foot/route/v1/foot"
 }

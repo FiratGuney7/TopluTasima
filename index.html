@@ -17,16 +17,10 @@
 <div class="proto-bar" role="region" aria-label="Prototype controls">
   <div class="proto-inner">
     <span class="proto-tag">PROTOTYPE</span>
-    <span class="proto-label">Transport card</span>
-    <div class="proto-switch" role="tablist" aria-label="Card variation">
-      <button role="tab" data-variant="A1" aria-selected="true"><b>A1</b> Sidebar card</button>
-      <button role="tab" data-variant="A2" aria-selected="false"><b>A2</b> Page section</button>
-      <button role="tab" data-variant="A3" aria-selected="false"><b>A3</b> Highlight band</button>
-    </div>
-    <div class="proto-switch proto-alt" role="tablist" aria-label="Other card variations">
-      <span class="proto-alt-label">Other</span>
-      <button role="tab" data-variant="B" aria-selected="false" title="Compact card"><b>B</b></button>
-      <button role="tab" data-variant="C" aria-selected="false" title="Full-width card"><b>C</b></button>
+    <span class="proto-label">Location map</span>
+    <div class="proto-switch" role="tablist" aria-label="Map variation">
+      <button role="tab" data-variant="H" aria-selected="true">Yatay</button>
+      <button role="tab" data-variant="V" aria-selected="false">Dikey</button>
     </div>
     <span class="proto-label">Location</span>
     <div class="proto-switch proto-loc" role="tablist" aria-label="Listing location precision">
@@ -36,9 +30,8 @@
     <button class="proto-jump" type="button" id="proto-jump" title="Scroll to the card">Go to card ↓</button>
     <span class="proto-spacer"></span>
     <span class="proto-data" id="proto-data">Loading data…</span>
-    <button class="proto-notes-btn" type="button" id="proto-notes-btn" aria-expanded="false">Review notes</button>
+    <a class="proto-notes-btn proto-handoff" href="notes.html">Teslim notları</a>
   </div>
-  <div class="proto-notes" id="proto-notes" hidden></div>
 </div>
 
 <!-- ================= SITE HEADER ================= -->
@@ -82,7 +75,7 @@
 
     <article class="detail-area">
 
-      <!-- ===== ROWS 1–2: gallery, price, reasons, description | agent, general details, prices (columns flow independently, like the live site) ===== -->
+      <!-- ===== Two columns that flow independently, like the live site ===== -->
       <div class="row">
         <div class="left-block" id="col-l2">
           <section class="gallery-top">
@@ -90,11 +83,24 @@
               <img id="gallery-main-img" src="assets/img/photo-01.jpg" alt="Luviya project, Antalya">
               <button class="g-arrow g-prev" type="button" aria-label="Previous photo">‹</button>
               <button class="g-arrow g-next" type="button" aria-label="Next photo">›</button>
-              <div class="g-counts">
-                <span title="Photos"><svg viewBox="0 0 16 16"><path d="M2 4h3l1-1.5h4L11 4h3v9H2z" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8.5" r="2.4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>27</span>
-                <span title="Floor plans"><svg viewBox="0 0 16 16"><path d="M2 2h12v12H2zM2 8h6V2M8 11v3" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>13</span>
-                <span title="Videos"><svg viewBox="0 0 16 16"><path d="M2 4h9v8H2zM11 7l3-2v6l-3-2" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>3</span>
-                <span title="Construction"><svg viewBox="0 0 16 16"><path d="M3 14V6l5-4 5 4v8zM6 14v-4h4v4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>14</span>
+              <!-- Gallery menu: same buttons and icons as the live listing (svg2.svg sprite of the site, inlined so it also works from disk) -->
+              <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+                <symbol id="gm-video" viewBox="0 0 22.176 15.297"><g transform="translate(0 -79.416)"><g transform="translate(0 79.416)"><g transform="translate(0 0)"><path d="M18.927,79.416H3.249A3.253,3.253,0,0,0,0,82.665v8.8a3.253,3.253,0,0,0,3.249,3.249H18.927a3.253,3.253,0,0,0,3.249-3.249v-8.8A3.253,3.253,0,0,0,18.927,79.416Zm2.44,12.048a2.442,2.442,0,0,1-2.44,2.44H3.249a2.442,2.442,0,0,1-2.440-2.44v-8.8a2.442,2.442,0,0,1,2.44-2.44H18.927a2.442,2.442,0,0,1,2.44,2.44Z" transform="translate(0 -79.416)"/></g></g><g transform="translate(8.388 83.543)"><path d="M199.726,177.926l-5.467-3.156a.4.4,0,0,0-.607.35v6.313a.4.4,0,0,0,.607.35l5.467-3.156a.4.4,0,0,0,0-.7Zm-5.265,2.806v-4.911l4.253,2.456Z" transform="translate(-193.652 -174.715)"/></g></g></symbol>
+                <symbol id="gm-dis" viewBox="0 0 21.945 17.273"><g transform="translate(0 -44.8)"><g transform="translate(0 44.8)"><g transform="translate(0 0)"><path d="M21.215,47.491a2.359,2.359,0,0,0-1.731-.73H16.021v-.042a1.873,1.873,0,0,0-.563-1.356A1.909,1.909,0,0,0,14.1,44.8H7.844A1.923,1.923,0,0,0,5.9,46.719v.042H2.462a2.359,2.359,0,0,0-1.731.73A2.48,2.48,0,0,0,0,49.222V59.611a2.359,2.359,0,0,0,.73,1.731,2.48,2.48,0,0,0,1.731.73H19.484a2.359,2.359,0,0,0,1.731-.73,2.48,2.48,0,0,0,.73-1.731V49.222A2.359,2.359,0,0,0,21.215,47.491Zm-.355,12.12H20.84a1.353,1.353,0,0,1-1.356,1.356H2.462a1.353,1.353,0,0,1-1.356-1.356V49.222a1.353,1.353,0,0,1,1.356-1.356H6.488a.561.561,0,0,0,.563-.563v-.6a.785.785,0,0,1,.814-.814H14.1a.785.785,0,0,1,.814.814v.6a.561.561,0,0,0,.563.563H19.5a1.353,1.353,0,0,1,1.356,1.356Z" transform="translate(0 -44.8)"/><path d="M117.132,130.8a5.128,5.128,0,1,0,3.63,1.5A5.141,5.141,0,0,0,117.132,130.8Zm2.837,7.99a4.029,4.029,0,0,1-5.674,0,3.988,3.988,0,0,1-1.168-2.837,4.077,4.077,0,0,1,1.168-2.837,3.988,3.988,0,0,1,2.837-1.168,4.077,4.077,0,0,1,2.837,1.168,3.988,3.988,0,0,1,1.168,2.837A3.9,3.9,0,0,1,119.969,138.79Z" transform="translate(-106.159 -126.315)"/><circle cx="1.022" cy="1.022" r="1.022" transform="translate(17.377 4.464)"/></g></g></g></symbol>
+                <symbol id="gm-ic" viewBox="0 0 25.025 15.641"><g transform="translate(0 -96)"><g transform="translate(0 96)"><path d="M23.461,100.171H22.94V97.564A1.566,1.566,0,0,0,21.376,96H3.649a1.566,1.566,0,0,0-1.564,1.564v2.607H1.564A1.566,1.566,0,0,0,0,101.735v6.256a1.566,1.566,0,0,0,1.564,1.564h.521v1.564a.522.522,0,0,0,.521.521H5.735a.522.522,0,0,0,.521-.521v-1.564H18.769v1.564a.522.522,0,0,0,.521.521h3.128a.522.522,0,0,0,.521-.521v-1.564h.521a1.566,1.566,0,0,0,1.564-1.564v-6.256A1.566,1.566,0,0,0,23.461,100.171ZM3.128,97.564a.522.522,0,0,1,.521-.521H21.376a.522.522,0,0,1,.521.521v2.7a1.561,1.561,0,0,0-1.043,1.468V103.3H4.171v-1.564a1.561,1.561,0,0,0-1.043-1.468Zm17.726,6.778v1.043H4.171v-1.043ZM5.214,110.6H3.128v-1.043H5.214Zm16.683,0H19.811v-1.043H21.9Zm2.085-2.607a.522.522,0,0,1-.521.521H1.564a.522.522,0,0,1-.521-.521v-6.256a.522.522,0,0,1,.521-.521H2.607a.522.522,0,0,1,.521.521v4.171a.522.522,0,0,0,.521.521H21.376a.522.522,0,0,0,.521-.521v-4.171a.522.522,0,0,1,.521-.521h1.043a.522.522,0,0,1,.521.521Z" transform="translate(0 -96)"/></g></g></symbol>
+                <symbol id="gm-insaat" viewBox="0 0 16.143 16.143"><path d="M2.845,15.735A1.363,1.363,0,0,1,1.5,14.39a1.345,1.345,0,0,1,.584-1.109.99.99,0,0,0,.425-.819V8.336a.336.336,0,1,1,.673,0v4.126a1.662,1.662,0,0,1-.716,1.373.671.671,0,0,0-.293.555.691.691,0,0,0,.673.673.673.673,0,0,0,.673-.673.336.336,0,0,1,.673,0A1.347,1.347,0,0,1,2.845,15.735Z" transform="translate(-0.491 -2.619)"/><path d="M16.027,17.452a.336.336,0,0,1-.336-.336V4.673H13.673V17.116a.336.336,0,1,1-.673,0V4.336A.336.336,0,0,1,13.336,4h2.69a.336.336,0,0,1,.336.336v12.78A.336.336,0,0,1,16.027,17.452Z" transform="translate(-4.256 -1.31)"/><path d="M16.027,15.435h-2.69a.336.336,0,1,1,0-.673h1.879L13.1,12.646a.337.337,0,0,1,.237-.574h1.879L13.1,9.956a.337.337,0,0,1,.237-.574h1.879L13.1,7.265a.337.337,0,0,1,.237-.574h1.879L13.1,4.575a.336.336,0,0,1,.476-.476l2.69,2.69a.336.336,0,0,1-.238.574H14.148l2.116,2.116a.337.337,0,0,1-.237.574H14.148l2.116,2.116a.337.337,0,0,1-.237.574H14.148l2.116,2.116a.337.337,0,0,1-.237.574Z" transform="translate(-4.256 -1.31)"/><path d="M15.806,7.363H.336A.336.336,0,0,1,0,7.027V5.682a.336.336,0,0,1,.285-.332L9.029,4a.336.336,0,0,1,.1.665L.673,5.97v.72h14.8V5.924L11.664,4.655a.336.336,0,1,1,.213-.638l4.036,1.345a.337.337,0,0,1,.229.319V7.027a.336.336,0,0,1-.336.336Z" transform="translate(0 -1.31)"/><path d="M15.336,3.363A.336.336,0,0,1,15,3.027V.336a.336.336,0,1,1,.673,0v2.69A.336.336,0,0,1,15.336,3.363Z" transform="translate(-4.911)"/><path d="M22.354,10.69H20.336A.336.336,0,0,1,20,10.354V8.336A.336.336,0,0,1,20.336,8h2.018a.336.336,0,0,1,.336.336v2.018A.336.336,0,0,1,22.354,10.69Zm-1.682-.673h1.345V8.673H20.673Z" transform="translate(-6.548 -2.619)"/><path d="M1.836,4.553A.336.336,0,0,1,1.7,3.907l9.08-3.88a.339.339,0,0,1,.35.052l4.372,3.7a.336.336,0,1,1-.435.514L10.859.727l-8.891,3.8a.337.337,0,0,1-.132.027Z" transform="translate(-0.491 0)"/></symbol>
+                <symbol id="gm-kat" viewBox="0 0 16.143 16.143"><g transform="translate(7.721)"><g><path d="M235.017,0a.351.351,0,0,0-.351.351v9.826a.351.351,0,1,0,.7,0V.351A.351.351,0,0,0,235.017,0Z" transform="translate(-234.666)"/></g></g><g transform="translate(12.633 7.018)"><g><path d="M387.158,213.333h-2.807a.351.351,0,0,0,0,.7h2.807a.351.351,0,0,0,0-.7Z" transform="translate(-384 -213.333)"/></g></g><g transform="translate(5.615 7.018)"><g><path d="M175.228,213.333h-4.211a.351.351,0,0,0,0,.7h4.211a.351.351,0,0,0,0-.7Z" transform="translate(-170.666 -213.333)"/></g></g><g transform="translate(0 7.018)"><g><path d="M3.158,213.333H.351a.351.351,0,0,0,0,.7H3.158a.351.351,0,0,0,0-.7Z" transform="translate(0 -213.333)"/></g></g><g transform="translate(7.721 12.633)"><g><path d="M235.017,384a.351.351,0,0,0-.351.351v2.807a.351.351,0,0,0,.7,0v-2.807A.351.351,0,0,0,235.017,384Z" transform="translate(-234.666 -384)"/></g></g><g><path d="M15.792,0H.351A.351.351,0,0,0,0,.351v9.826a.352.352,0,0,0,.351.351h.7a.351.351,0,1,0,0-.7H.7V.7H15.441V15.441H.7V13.335h.351a.351.351,0,1,0,0-.7h-.7A.351.351,0,0,0,0,12.984v2.807a.351.351,0,0,0,.351.351H15.792a.351.351,0,0,0,.351-.351V.351A.351.351,0,0,0,15.792,0Z"/></g><g transform="translate(7.019 12.633)"><g><path d="M215.088,384h-1.4a.351.351,0,0,0,0,.7h1.4a.351.351,0,0,0,0-.7Z" transform="translate(-213.333 -384)"/></g></g><g transform="translate(2.808 6.316)"><g><path d="M85.684,192a.351.351,0,0,0-.351.351v1.4a.351.351,0,0,0,.7,0v-1.4A.351.351,0,0,0,85.684,192Z" transform="translate(-85.333 -192)"/></g></g><g transform="translate(5.615 6.316)"><g><path d="M171.017,192a.351.351,0,0,0-.351.351v1.4a.351.351,0,1,0,.7,0v-1.4A.351.351,0,0,0,171.017,192Z" transform="translate(-170.666 -192)"/></g></g><g transform="translate(9.826 6.316)"><g><path d="M299.017,192a.351.351,0,0,0-.351.351v1.4a.351.351,0,1,0,.7,0v-1.4A.351.351,0,0,0,299.017,192Z" transform="translate(-298.666 -192)"/></g></g><g transform="translate(12.633 6.316)"><g><path d="M384.351,192a.351.351,0,0,0-.351.351v1.4a.351.351,0,1,0,.7,0v-1.4A.351.351,0,0,0,384.351,192Z" transform="translate(-384 -192)"/></g></g></symbol>
+                <symbol id="gm-map" viewBox="0 0 12.979 19.469"><g transform="translate(-85.333)"><g transform="translate(85.333)"><g transform="translate(0)"><path d="M91.823,0a6.49,6.49,0,0,0-5.711,9.574l5.356,9.686a.406.406,0,0,0,.71,0l5.358-9.689A6.491,6.491,0,0,0,91.823,0Zm5,9.181-5,9.044-5-9.041a5.678,5.678,0,1,1,10,0Z" transform="translate(-85.333)"/><path d="M173.912,85.333a3.245,3.245,0,1,0,3.245,3.245A3.249,3.249,0,0,0,173.912,85.333Zm0,5.679a2.434,2.434,0,1,1,2.434-2.434A2.436,2.436,0,0,1,173.912,91.012Z" transform="translate(-167.422 -82.088)"/></g></g></g></symbol>
+              </svg>
+              <div class="gallery-menu">
+                <ul class="sekme6">
+                  <li title="Video"><svg class="gm-video"><use href="#gm-video"/></svg></li>
+                  <li title="Photos"><svg class="gm-dis"><use href="#gm-dis"/></svg>27</li>
+                  <li title="Interior"><svg class="gm-ic"><use href="#gm-ic"/></svg>13</li>
+                  <li title="Construction"><svg class="gm-insaat"><use href="#gm-insaat"/></svg>3</li>
+                  <li title="Floor plans"><svg class="gm-kat"><use href="#gm-kat"/></svg>14</li>
+                  <li title="Location"><button type="button" id="g-map" aria-label="Location"><svg class="gm-map"><use href="#gm-map"/></svg></button></li>
+                </ul>
               </div>
             </div>
             <div class="gallery-thumbs" id="gallery-thumbs"></div>
@@ -119,9 +125,6 @@
             </div>
           </section>
 
-          <!-- Variation A3 slot: main column, right under the price -->
-          <div class="transit-slot" id="slot-A3" data-slot="A3"></div>
-
           <div class="top-title"><span>TOP 3 REASONS TO BUY</span></div>
           <ul class="reasons">
             <li>Indoor and outdoor pool and parking lot</li>
@@ -141,13 +144,24 @@
           </div>
           <div class="read-more"><span class="open" id="read-more">Read More</span></div>
 
-          <!-- Variation A2 slot: main column, a section after the description -->
-          <div class="transit-slot" id="slot-A2" data-slot="A2"></div>
 
-          <!-- Variation B slot: inside the main listing content, right after the description -->
-          <div class="transit-slot" id="slot-B" data-slot="B"></div>
 
           <div class="property-area-link"><a href="#">More Apartments for sale in Muratpaşa <span>→</span></a></div>
+
+          <!-- Yatay (H): location map in the main column, right above Features -->
+          <div class="transit-slot" id="slot-H" data-slot="H"></div>
+
+          <div class="top-title"><span>FEATURES</span></div>
+          <div class="features" id="features"></div>
+
+          <div class="top-title mt"><span>REQUEST FURTHER DETAILS</span></div>
+          <form class="request-form" onsubmit="return false">
+            <input placeholder="Name Surname" disabled><input placeholder="E-mail" disabled>
+            <input placeholder="Phone" disabled><input placeholder="Country" disabled>
+            <textarea placeholder="Message" disabled></textarea>
+            <label class="terms"><input type="checkbox" disabled> I have read and accept <u>Terms of Use</u>.</label>
+            <span class="btn-send">SEND</span>
+          </form>
         </div>
 
         <aside class="right-block" id="col-r2">
@@ -196,31 +210,9 @@
             <div class="ask-wrap"><span class="ask-btn-style">ASK FOR PRICE LIST AND PAYMENT PLAN</span></div>
           </section>
 
-          <!-- Variation A1 slot: sidebar, below the room types / prices -->
-          <div class="transit-slot" id="slot-A1" data-slot="A1"></div>
-        </aside>
-      </div>
+          <!-- Dikey (V): location map in the sidebar, below the room types / prices -->
+          <div class="transit-slot" id="slot-V" data-slot="V"></div>
 
-      <!-- ===== Variation C slot: full width, below Property Details, before Features ===== -->
-      <div class="transit-slot slot-full" id="slot-C" data-slot="C"></div>
-
-      <!-- ===== ROW 3: features + request | trust + manager + costs ===== -->
-      <div class="row">
-        <div class="left-block" id="col-l3">
-          <div class="top-title"><span>FEATURES</span></div>
-          <div class="features" id="features"></div>
-
-          <div class="top-title mt"><span>REQUEST FURTHER DETAILS</span></div>
-          <form class="request-form" onsubmit="return false">
-            <input placeholder="Name Surname" disabled><input placeholder="E-mail" disabled>
-            <input placeholder="Phone" disabled><input placeholder="Country" disabled>
-            <textarea placeholder="Message" disabled></textarea>
-            <label class="terms"><input type="checkbox" disabled> I have read and accept <u>Terms of Use</u>.</label>
-            <span class="btn-send">SEND</span>
-          </form>
-        </div>
-
-        <aside class="right-block" id="col-r3">
           <section class="trust">
             <div class="trust-head"><span>EVERY TIME</span><b>BEST</b><span>PRICE</span></div>
             <h4>UP-TO-DATE</h4><p>Our website and exchange rates are regularly and precisely updated.</p>
@@ -242,6 +234,8 @@
           </div>
         </aside>
       </div>
+
+
     </article>
   </div>
 </main>

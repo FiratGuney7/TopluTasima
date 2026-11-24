@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Transit Card A Texts</title>
+<title>Location Map Texts</title>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/vendor/leaflet-1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="../assets/css/transit.css">
@@ -28,10 +28,10 @@
   .legend span { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px 3px 4px; font-size: 12px; }
   .legend i { width: 16px; height: 16px; border-radius: 50%; background: var(--c); }
 
-  .cards { display: grid; grid-template-columns: 389px 389px; gap: 24px; align-items: start; }
   .states { grid-column: 1 / -1; }
   .state-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
-  .dialog-host { position: relative; height: 640px; }
+  .maps { width: 813px; max-width: 100%; display: grid; gap: 28px; }
+  .tc-mx-H .tc-mx-stage { height: 520px; }
   .tc-dialog.is-inline { opacity: 1; transform: none; width: 100%; height: 100%; box-shadow: none; border: 1px solid var(--line); }
 
   mark.i18n { --c: var(--c-label); background: color-mix(in srgb, var(--c) 12%, transparent); color: inherit; outline: 2px solid var(--c); outline-offset: 1px; border-radius: 3px; position: relative; padding: 0 1px; }
@@ -55,35 +55,24 @@
   @media print {
     .page { max-width: none; padding: 0; }
     .break { break-before: page; }
-    .dialog-host { height: 600px; }
-    .cards { zoom: .7; }                /* both cards + states on one A4 landscape page */
     .rule, .legend { font-size: 11px; }
   }
-  @media screen and (max-width: 900px) { .cards, .state-row { grid-template-columns: 1fr; } .dialog-host { height: 880px; } table { display: block; overflow-x: auto; } }
+  @media screen and (max-width: 900px) { .state-row { grid-template-columns: 1fr; } table { display: block; overflow-x: auto; } }
 </style>
 </head>
 <body>
 <div class="page">
-  <h1>Transit card (A) — texts to translate</h1>
+  <h1>Location map — texts to translate</h1>
   <p class="rule">Every outlined text has a number; the list at the end gives its CMS title (<b>Settings › Fixed Contents</b>) and the English text. Keep <code>{placeholders}</code> unchanged. Stop names, line numbers and directions are not translated.</p>
   <div class="legend" id="legend"></div>
 
   <section>
-    <div class="cards">
-      <div><h2>Card · exact location</h2><div id="cardExact"></div></div>
-      <div><h2>Card · approximate location</h2><div id="cardApprox"></div></div>
+    <div class="maps">
+      <div><h2>Map · exact location · public transport on, lines shown</h2><div id="mapExact"></div></div>
+      <div class="break"><h2>Map · exact location · stop popup</h2><div id="mapPopup"></div></div>
+      <div class="break"><h2>Map · approximate location · public transport on, stop popup</h2><div id="mapApprox"></div></div>
       <div class="states"><h2>Loading · error</h2><div class="state-row"><div id="stLoading"></div><div id="stError"></div></div></div>
     </div>
-  </section>
-
-  <section class="break">
-    <h2>Expanded view · exact location</h2>
-    <div class="dialog-host" id="dlgExact"></div>
-  </section>
-
-  <section class="break">
-    <h2>Expanded view · approximate location</h2>
-    <div class="dialog-host" id="dlgApprox"></div>
   </section>
 
   <section class="break">
@@ -118,19 +107,14 @@
   const UI = window.TransitUI;
   const exact = await UI.load({ locationMode: "exact" });
   const approx = await UI.load({ locationMode: "approximate" });
-  UI.renderA(document.getElementById("cardExact"), exact);
-  UI.renderA(document.getElementById("cardApprox"), approx);
+  const busStop = exact.stops.find((s) => s.mode === "bus" && s.stopCode);
+  const outStop = approx.stops.find((s) => !s.inArea && s.lines.length);
+  const m1 = UI.renderH(document.getElementById("mapExact"), exact, { transit: true });
+  const m2 = UI.renderH(document.getElementById("mapPopup"), exact, { transit: true });
+  const m3 = UI.renderH(document.getElementById("mapApprox"), approx, { transit: true });
+  setTimeout(() => { m1.lines(true, "T1A"); busStop && m2.select(busStop.id); outStop && m3.select(outStop.id); }, 400);
   document.getElementById("stLoading").innerHTML = UI.loadingHTML();
   document.getElementById("stError").innerHTML = UI.errorHTML();
-  for (const [id, data, stop] of [
-    ["dlgExact", exact, exact.stops.find((s) => s.mode === "bus" && s.stopCode)],
-    ["dlgApprox", approx, approx.stops.find((s) => !s.inArea)],
-  ]) {
-    const host = document.getElementById(id);
-    host.innerHTML = UI.dialogHTML(data, UI.headline(data), "is-inline");
-    const ex = UI.mountExplorer(host, data, stop && stop.id);
-    setTimeout(() => ex.scrollToSelected(), 300);
-  }
   document.documentElement.dataset.ready = "1";
 })();
 </script>

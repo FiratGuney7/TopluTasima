@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Konum Haritası · Teslim Notları</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/transit.css">
+<style>
+  :root { --navy: #192b43; --red: #da0021; --blue: #2f7fd0; --ink: #192b43; --ink-2: #4a5868; --ink-3: #7b8794; --line: #e4e7eb; --soft: #f6f7f9; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding-top: 44px; font: 15px/1.6 "Open Sans", Arial, sans-serif; color: var(--ink); background: #fff; }
+  .page { max-width: 860px; margin: 0 auto; padding: 36px 20px 64px; }
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--red); margin: 0 0 6px; }
+  h1 { font-size: 28px; line-height: 1.25; margin: 0 0 10px; }
+  .lead { font-size: 16px; color: var(--ink-2); margin: 0 0 8px; }
+  .meta { font-size: 13px; color: var(--ink-3); margin: 0; }
+  nav.toc { margin: 28px 0 8px; padding: 14px 18px; background: var(--soft); border-radius: 10px; font-size: 14px; }
+  nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+  nav.toc a { color: var(--ink); text-decoration: none; }
+  nav.toc a:hover { color: var(--blue); text-decoration: underline; }
+  section { margin-top: 40px; scroll-margin-top: 60px; }
+  h2 { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--red); margin: 0 0 14px; padding-bottom: 6px; border-bottom: 1px solid #999; }
+  h3 { font-size: 16px; margin: 22px 0 6px; }
+  p { margin: 0 0 10px; }
+  ul { margin: 0 0 10px; padding-left: 20px; }
+  li { margin: 4px 0; }
+  a { color: var(--blue); }
+  b { font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 6px 0 12px; }
+  th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); border-bottom: 2px solid var(--line); padding: 8px 10px; }
+  td { border-bottom: 1px solid var(--line); padding: 10px; vertical-align: top; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  .note { background: #fff8e6; border-left: 3px solid #e0a100; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 14px; margin: 10px 0; }
+  .ok { background: #eef7f0; border-left-color: #2e8b57; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: #eaf2fc; color: #1f63b0; vertical-align: 2px; }
+  .tag.red { background: #fdecee; color: #b0001b; }
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: stretch; margin: 10px 0 14px; }
+  .flow > div { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 14px; }
+  .flow > div b { display: block; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+  .flow > span { align-self: center; font-size: 22px; color: var(--ink-3); }
+  .back { display: inline-flex; align-items: center; gap: 6px; font: 600 12px "Open Sans", sans-serif; color: #e9ecf2; text-decoration: none; border: 1px solid #485066; border-radius: 4px; padding: 4px 10px; }
+  @media (max-width: 640px) { nav.toc ol { columns: 1; } .flow { grid-template-columns: 1fr; } .flow > span { transform: rotate(90deg); justify-self: center; } td:first-child { white-space: normal; } }
+  @media print { body { padding-top: 0; } .proto-bar { display: none; } section { break-inside: avoid-page; } }
+</style>
+</head>
+<body>
+
+<div class="proto-bar" role="region" aria-label="Prototype controls">
+  <div class="proto-inner">
+    <span class="proto-tag">PROTOTYPE</span>
+    <span class="proto-label">Teslim notları</span>
+    <span class="proto-spacer"></span>
+    <a class="back" href="index.html">← Prototipe dön</a>
+  </div>
+</div>
+
+<main class="page">
+  <p class="eyebrow">Teslim notları</p>
+  <h1>İlan sayfası: Konum haritası ve toplu taşıma</h1>
+  <p class="lead">İlan sayfasına eklenecek yeni “Location” bölümünün ne yaptığı, galerideki harita düğmesinde neyin değiştiği ve hangi verilerin nereden geldiği.</p>
+  <p class="meta">Örnek ilan: AYT-4507 · Prototip: <a href="index.html">index.html</a> · Çeviri belgesi: <a href="dist/Transit-Card-A-Texts.html">Transit-Card-A-Texts.html</a></p>
+
+  <nav class="toc" aria-label="İçindekiler">
+    <ol>
+      <li><a href="#ozet">Özet</a></li>
+      <li><a href="#harita-dugmesi">Galerideki harita düğmesi</a></li>
+      <li><a href="#yerlesim">Yerleşim: Yatay ve Dikey</a></li>
+      <li><a href="#davranis">Bölümün davranışı</a></li>
+      <li><a href="#konum">Kesin ve yaklaşık konum</a></li>
+      <li><a href="#kaynaklar">Kullanılan kaynaklar</a></li>
+      <li><a href="#guncelleme">Verinin güncellenmesi</a></li>
+      <li><a href="#metinler">Metinler ve çeviri</a></li>
+    </ol>
+  </nav>
+
+  <section id="ozet">
+    <h2>1. Özet</h2>
+    <ul>
+      <li>İlan sayfasına <b>“Location”</b> başlıklı yeni bir harita bölümü ekleniyor. Bölümün ana öğesi harita; toplu taşıma bilgisi bu haritanın üzerinde <b>yan özellik</b> olarak sunuluyor.</li>
+      <li>Galerideki konum düğmesi artık tam ekran harita açmıyor; sayfayı bu bölüme kaydırıyor.</li>
+      <li>Harita OpenStreetMap tabanlı. Durak ve hat bilgisi gerçek veriden geliyor; hiçbir bilgi elle girilmiyor.</li>
+      <li>Bölüm hem kesin konumlu ilanlarda hem de yaklaşık konumlu (daire ile gösterilen) ilanlarda çalışıyor.</li>
+    </ul>
+  </section>
+
+  <section id="harita-dugmesi">
+    <h2>2. Galerideki harita düğmesi</h2>
+    <div class="flow">
+      <div><b>Bugün</b>Fotoğrafın altındaki düğme sırasında en sağdaki konum (iğne) düğmesi, galerinin son slaytını açar: tüm ekranı kaplayan, yalnızca ilanın konumunu gösteren bir Google haritası.</div>
+      <span aria-hidden="true">→</span>
+      <div><b>Yeni</b>Aynı düğme, sayfayı yeni “Location” bölümüne yumuşakça kaydırır. <b>Tam ekran harita ve galerideki harita slaytı kaldırılır.</b></div>
+    </div>
+    <ul>
+      <li>Düğme sırasının görünümü değişmiyor: video, fotoğraf, iç mekân, inşaat, kat planı ve konum düğmeleri sitedeki ile aynı ikon, ölçü ve renklerle kalıyor.</li>
+      <li>Değişen tek şey konum düğmesinin tıklandığında yaptığı iş.</li>
+      <li>Bölüm sayfada görünür olduğu için Google Maps’in bu sayfadaki kullanımı da kalkmış oluyor.</li>
+    </ul>
+  </section>
+
+  <section id="yerlesim">
+    <h2>3. Yerleşim: Yatay ve Dikey</h2>
+    <p>Aynı bölümün iki yerleşim seçeneği hazırlandı. İçerik ve davranış aynı; yalnızca yeri ve haritanın oranı değişiyor. Prototipte üst bardan geçilebilir.</p>
+    <table>
+      <thead><tr><th>Seçenek</th><th>Yeri</th><th>Görünüm</th></tr></thead>
+      <tbody>
+        <tr><td>Yatay <span class="tag">1. seçenek</span></td><td>Sol (ana) sütunda, “Features” bölümünün hemen üstünde</td><td>Geniş harita. Toplu taşıma kutusu haritanın sol alt köşesinde.</td></tr>
+        <tr><td>Dikey <span class="tag">2. seçenek</span></td><td>Sağ sütunda, “Every time correct prices” bölümünün altında</td><td>Dar harita. Toplu taşıma açılınca kutu haritanın altına yerleşir.</td></tr>
+      </tbody>
+    </table>
+    <p>İki seçenekte de bölüm başlığı sitenin mevcut kırmızı bölüm başlığı stilini kullanıyor (“FEATURES” gibi).</p>
+  </section>
+
+  <section id="davranis">
+    <h2>4. Bölümün davranışı</h2>
+    <h3>Harita</h3>
+    <ul>
+      <li>Açılışta ilan (ya da yaklaşık konum dairesi) haritanın <b>tam ortasında</b>, mahalle ölçeğinde gelir.</li>
+      <li>Sağ üstte yakınlaştır, uzaklaştır ve “ilana geri dön” düğmeleri var.</li>
+      <li><b>Sayfa kaydırması haritaya takılmaz.</b> Bilgisayarda harita Ctrl (Mac’te ⌘) + tekerlek ile, telefonda iki parmakla hareket eder. Tek başına tekerlek ya da tek parmak sayfayı kaydırmaya devam eder; haritanın üzerinde kısa bir ipucu görünür.</li>
+      <li>Yakınlaştırma şehir ve sokak ölçeği arasında sınırlı.</li>
+    </ul>
+    <h3>Toplu taşıma <span class="tag red">varsayılan: kapalı</span></h3>
+    <ul>
+      <li>Haritanın köşesinde küçük bir “Public transport” anahtarı var. Bölüm sade bir konum haritası olarak açılır.</li>
+      <li>Anahtar açılınca: duraklar haritada görünür, ilandan en yakın durağa yürüme yolu çizilir ve kutu yukarı doğru açılarak <b>en yakın tramvay ve otobüs durağını</b> hatları ve yürüme süresiyle gösterir.</li>
+      <li><b>Show lines:</b> çevredeki tüm hatları haritada çizer ve hat numaralarını listeler. Bir numara seçilince o hattın güzergâhı öne çıkar.</li>
+      <li><b>Durak kartı:</b> haritadaki ya da kutudaki bir durağa tıklanınca durağın üzerinde küçük bir kart açılır: yürüme süresi ve mesafe, durak numarası, hatlar ve yönleri.</li>
+    </ul>
+    <h3>Mobil</h3>
+    <ul>
+      <li>Harita tam genişlikte. Toplu taşıma açılınca kutu haritanın üstünü kapatmaz, altına yerleşir.</li>
+    </ul>
+  </section>
+
+  <section id="konum">
+    <h2>5. Kesin ve yaklaşık konum</h2>
+    <table>
+      <thead><tr><th></th><th>Kesin konum</th><th>Yaklaşık konum</th></tr></thead>
+      <tbody>
+        <tr><td>Kullanım</td><td>Konumu açıkça paylaşılan ilanlar (ör. tek satıcılı projeler)</td><td>İlanların çoğu</td></tr>
+        <tr><td>Haritada</td><td>İlan iğnesi</td><td>Sitedeki ile aynı kırmızı daire (1.000 m yarıçap)</td></tr>
+        <tr><td>Mesafe</td><td>İlandan yürüme süresi ve mesafesi</td><td>“Alanın içinde” ya da “alana ~X m” (50 m’ye yuvarlanmış). Yürüme süresi gösterilmez.</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>Önemli:</b> Yaklaşık konumlu ilanlarda dairenin merkezi gerçek konumdan kaydırılmış olmalı ve bu kaydırma <b>sunucu tarafında</b> yapılmalı. Gerçek koordinatlar tarayıcıya hiç gönderilmemeli; aksi halde gerçek konum sayfadan okunabilir. Prototipte bu kaydırma örnek olarak sabit bir değerle gösterildi.</div>
+  </section>
+
+  <section id="kaynaklar">
+    <h2>6. Kullanılan kaynaklar</h2>
+    <table>
+      <thead><tr><th>Ne için</th><th>Kaynak</th><th>Not</th></tr></thead>
+      <tbody>
+        <tr><td>Harita verisi</td><td><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></td><td>Ücretsiz, açık lisans (ODbL). Haritanın altında “© OpenStreetMap contributors” yazması <b>zorunlu</b>; bölümde bu yazı var.</td></tr>
+        <tr><td>Harita görüntüsü (altlık)</td><td>OpenStreetMap “HOT” stili, OSM France sunucusu; yedek olarak OSM Almanya ve Esri gri altlık</td><td>Ücretsiz sunucular; bu şekilde sorunsuz çalışıyor. İsterseniz kendi tercih ettiğiniz başka bir altlık da kullanabilirsiniz.</td></tr>
+        <tr><td>Durak konumları</td><td>OpenStreetMap (Overpass servisi ile)</td><td>İlana 1 km mesafedeki tramvay ve otobüs durakları.</td></tr>
+        <tr><td>Hatlar ve yönleri</td><td>Önce <b>KentKart</b> verisi, yoksa OpenStreetMap</td><td>KentKart verisi, KentKart’tan üretilmiş <b>üçüncü parti</b> bir veri seti (resmi değil). OpenStreetMap tek başına hatların çoğunu içermiyor: bu ilanda 21 durağın yalnızca 13’ünde ve sadece 4 hat vardı; KentKart ile 22 hat. Kartlarda kaynak olarak KentKart adı <b>gösterilmiyor</b>.</td></tr>
+        <tr><td>Yürüme süresi ve yolu</td><td>OSRM yaya rotası (OpenStreetMap yolları üzerinden)</td><td>Ücretsiz. Yürüme süresi ve mesafesi ilan ile durak arasındaki gerçek yol üzerinden hesaplanır.</td></tr>
+        <tr><td>Harita kütüphanesi</td><td>Leaflet 1.9.4</td><td>Açık kaynak, ücretsiz (BSD lisansı).</td></tr>
+        <tr><td>İkonlar</td><td>Material Icons (toplu taşıma, yürüme vb.); galeri düğmelerinde sitenin kendi ikonları</td><td>Material Icons açık lisanslı (Apache 2.0).</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="guncelleme">
+    <h2>7. Verinin güncellenmesi</h2>
+    <ul>
+      <li>Durak, hat ve yürüme bilgisi <b>sayfa her açıldığında dış servislerden çekilmemeli</b>. Bu servisler yavaş olabiliyor ya da istek sınırı uygulayabiliyor.</li>
+      <li>Önerimiz: veri düzenli aralıklarla (örneğin ayda bir) arka planda alınıp ilanlarla birlikte saklansın; sayfa bu saklanan veriyi göstersin.</li>
+      <li>Prototipte veri 18 Kasım 2026’da bir kez alınıp kaydedildi.</li>
+      <li>Bölümün altındaki not bu yüzden önemli: “Map information is updated regularly but is for guidance only and may change.”</li>
+    </ul>
+  </section>
+
+  <section id="metinler">
+    <h2>8. Metinler ve çeviri</h2>
+    <ul>
+      <li>Bölümdeki tüm metinler (33 adet) CMS’ten yönetilecek şekilde listelendi.</li>
+      <li>Bazı metinlerde <code>{n}</code>, <code>{minutes}</code> gibi yer tutucular var; bunlar her dilde aynen kalmalı.</li>
+      <li>Durak adları, hat numaraları ve yönler çevrilmez; veriden olduğu gibi gelir.</li>
+      <li>Çevirmenler için hazırlanan belge her metni harita üzerinde renkli ve numaralı gösteriyor: <a href="dist/Transit-Card-A-Texts.html">Transit-Card-A-Texts.html</a> (tek dosya, e-postayla gönderilebilir).</li>
+    </ul>
+  </section>
+
+
+</main>
+</body>
+</html>

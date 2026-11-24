@@ -122,6 +122,26 @@
     });
     layer.addTo(map);
   }
+  // Warm the browser cache with the base-map tiles around a point, so a view that hasn't been
+  // shown yet (e.g. the approximate area at a wider zoom) appears at once when it is opened.
+  // Same URLs as Leaflet requests (same server and sub-domain rule), so the browser cache is hit.
+  const prefetched = new Set();
+  function prefetchTiles(lat, lon, zooms, halfW = 560, halfH = 320) {
+    if (window.TRANSIT_NO_TILES) return;
+    const p = TILES[tileIdx], subs = p.subdomains || "abc";
+    for (const z of zooms) {
+      const n = 256 * 2 ** z, rad = (lat * Math.PI) / 180;
+      const px = ((lon + 180) / 360) * n, py = ((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2) * n;
+      for (let x = Math.floor((px - halfW) / 256); x <= Math.floor((px + halfW) / 256); x++) {
+        for (let y = Math.floor((py - halfH) / 256); y <= Math.floor((py + halfH) / 256); y++) {
+          const url = p.url.replace("{s}", subs[Math.abs(x + y) % subs.length]).replace("{z}", z).replace("{x}", x).replace("{y}", y);
+          if (prefetched.has(url)) continue;
+          prefetched.add(url);
+          new Image().src = url;
+        }
+      }
+    }
+  }
   function createMap(el, data, opts = {}) {
     const O = data.origin;
     const interactive = opts.interactive !== false;
@@ -635,7 +655,18 @@
       locationMode = "approximate";
       document.querySelectorAll(".proto-switch [data-loc]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.loc === "approximate")));
     }
-    load().then(() => { if (location.hash) document.getElementById(`slot-${current}`).scrollIntoView({ block: "start" }); });
+    load().then(() => {
+      if (location.hash) document.getElementById(`slot-${current}`).scrollIntoView({ block: "start" });
+      // Once the page is idle, fetch the base map of the other location mode in the background,
+      // so switching Exact ⇄ Approximate doesn't wait for map images.
+      const cfg = window.TRANSIT_SNAPSHOT && window.TRANSIT_SNAPSHOT.config;
+      if (!cfg) return;
+      const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1200));
+      idle(() => {
+        prefetchTiles(cfg.approximate.lat, cfg.approximate.lon, [13, 14]);
+        prefetchTiles(cfg.property.lat, cfg.property.lon, [15, 16]);
+      }, { timeout: 3000 });
+    });
   }
 
   // Building blocks for the translator sheet (docs/transit-card-a-texts.html).

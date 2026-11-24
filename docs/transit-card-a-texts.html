@@ -71,6 +71,7 @@
       <div><h2>Map · exact location · public transport on, lines shown</h2><div id="mapExact"></div></div>
       <div class="break"><h2>Map · exact location · stop popup</h2><div id="mapPopup"></div></div>
       <div class="break"><h2>Map · approximate location · public transport on, stop popup</h2><div id="mapApprox"></div></div>
+      <div class="break"><h2>Map · approximate location · tram stop inside the area</h2><div id="mapApprox2"></div></div>
       <div class="states"><h2>Loading · error</h2><div class="state-row"><div id="stLoading"></div><div id="stError"></div></div></div>
     </div>
   </section>
@@ -112,7 +113,9 @@
   const m1 = UI.renderH(document.getElementById("mapExact"), exact, { transit: true });
   const m2 = UI.renderH(document.getElementById("mapPopup"), exact, { transit: true });
   const m3 = UI.renderH(document.getElementById("mapApprox"), approx, { transit: true });
-  setTimeout(() => { m1.lines(true, "T1A"); busStop && m2.select(busStop.id); outStop && m3.select(outStop.id); }, 400);
+  const tramIn = approx.stops.find((s) => s.mode === "tram" && s.inArea);
+  const m4 = UI.renderH(document.getElementById("mapApprox2"), approx, { transit: true });
+  setTimeout(() => { m1.lines(true, "T1A"); busStop && m2.select(busStop.id); outStop && m3.select(outStop.id); tramIn && m4.select(tramIn.id); }, 400);
   document.getElementById("stLoading").innerHTML = UI.loadingHTML();
   document.getElementById("stError").innerHTML = UI.errorHTML();
   document.documentElement.dataset.ready = "1";

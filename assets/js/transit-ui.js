@@ -66,13 +66,9 @@
     walk: "M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7",
     home: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
     route: "M19 15.18V7c0-2.21-1.79-4-4-4s-4 1.79-4 4v10c0 1.1-.9 2-2 2s-2-.9-2-2V8.82C8.16 8.4 9 7.3 9 6c0-1.66-1.34-3-3-3S3 4.34 3 6c0 1.3.84 2.4 2 2.82V17c0 2.21 1.79 4 4 4s4-1.79 4-4V7c0-1.1.9-2 2-2s2 .9 2 2v8.18c-1.16.41-2 1.51-2 2.82 0 1.66 1.34 3 3 3s3-1.34 3-3c0-1.3-.84-2.4-2-2.82z",
-    expand: "M21 11V3h-8l3.29 3.29-10 10L3 13v8h8l-3.29-3.29 10-10z",
-    close: "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z",
-    chevron: "M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z",
     info: "M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z",
     recenter: "M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z",
-    map: "M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z",
-    arrow: "M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z",
+    refresh: "M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z",
     transit: "M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2.23l2-2H14l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-7H6V6h5v4zm2 0V6h5v4h-5zm3.5 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z",
   };
   const svg = (name, cls = "") => `<svg class="tc-svg ${cls}" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="${P[name]}"/></svg>`;
@@ -386,7 +382,9 @@
     const near = focusOf(data);
     const others = Math.max(0, data.stops.length - near.length);
     // Public transport starts switched off: the section opens as a clean location map.
-    let transitOn = initial.transit === true;
+    // initial.unavailable: transport data could not be loaded. The map is still shown; only the box says so.
+    const unavailable = !!initial.unavailable;
+    let transitOn = !unavailable && initial.transit === true;
     let linesOn = false, lineFocus = null;
     // Every line serving the stops on the map: tram first, then natural order (35, 46, 46A, 511…).
     const allLines = [...new Map(data.stops.flatMap((s) => s.lines).map((l) => [l.ref, l])).values()]
@@ -405,7 +403,11 @@
       <div class="top-title"><span>${t("loc.title")}</span></div>
       <div class="tc-mx-stage">
         <div class="tc-map tc-mx-map"></div>
-        <div class="tc-mx-box ${transitOn ? "is-on" : ""}">
+        ${unavailable ? `<div class="tc-mx-box is-on is-unavail" role="status">
+          <div class="tc-mx-head">${svg("transit", "tc-mx-icon")}<span>${t("layer.transport")}</span></div>
+          <div class="tc-mx-body"><p class="tc-mx-err">${t("state.errorTitle")} ${t("state.errorBody")}</p>
+            <button type="button" class="tc-mx-linesbtn tc-retry">${svg("refresh")}<span>${t("action.tryAgain")}</span></button></div>
+        </div>` : !data.stops.length ? "" : `<div class="tc-mx-box ${transitOn ? "is-on" : ""}">
           <div class="tc-mx-head">
             ${svg("transit", "tc-mx-icon")}<span>${t("layer.transport")}</span>
             <button type="button" class="tc-switch" role="switch" aria-checked="${transitOn}" aria-label="${tp("layer.transport")}"><i></i></button>
@@ -421,13 +423,13 @@
               </div>
             </div>` : ""}
           </div>
-        </div>
+        </div>`}
       </div>
       ${disclaimer()}
     </section>`;
 
     const root = slot.querySelector(".tc-mx");
-    const box = root.querySelector(".tc-mx-box");
+    const box = root.querySelector(".tc-mx-box") || document.createElement("div"); // no box when there are no stops
     // Part of the map the transport box covers (bottom-left): keep popups and pans clear of it.
     const insets = () => {
       const m = root.querySelector(".tc-mx-map").getBoundingClientRect(), b = box.getBoundingClientRect();
@@ -510,13 +512,14 @@
         if (!on) setLines(false);
         box.classList.toggle("is-on", on);
       });
-      box.querySelector(".tc-switch").setAttribute("aria-checked", String(on));
+      const sw = box.querySelector(".tc-switch"); if (sw) sw.setAttribute("aria-checked", String(on));
       ctl.setVisible("transport", on);
       if (!on) map.closePopup();
       resetSelection();
     }
     root.addEventListener("click", (e) => {
       if (e.target.closest(".leaflet-control-attribution a")) return;
+      if (unavailable) return;
       if (e.target.closest(".tc-switch, .tc-mx-head")) return setTransit(!transitOn);
       if (e.target.closest(".tc-mx-linesbtn")) return resizeBox(() => setLines(!linesOn));
       const lc = e.target.closest(".tc-linechip");
@@ -543,6 +546,15 @@
   const RENDER = { H: renderH, V: renderV };
   let current = "H", locationMode = "exact", controller = null, DATA = null, ERROR = null;
 
+  // When the transport data can't be loaded the map is still shown (the listing's location
+  // doesn't depend on it); only the public transport box reports the problem.
+  function fallbackData() {
+    const cfg = window.TRANSIT_SNAPSHOT && window.TRANSIT_SNAPSHOT.config;
+    if (!cfg) return null;
+    const approx = locationMode === "approximate";
+    const origin = approx ? { lat: cfg.approximate.lat, lon: cfg.approximate.lon, areaRadius: cfg.approximate.areaRadiusMeters } : { lat: cfg.property.lat, lon: cfg.property.lon };
+    return { config: cfg, origin, approximate: approx, stops: [], routeGeometry: {}, status: {} };
+  }
   function setVariant(v, { scroll = true } = {}) {
     if (!RENDER[v]) v = "H";
     current = v;
@@ -552,6 +564,7 @@
     const slot = document.getElementById(`slot-${v}`);
     slot.classList.add("is-active");
     if (DATA) controller = RENDER[v](slot, DATA);
+    else if (ERROR && fallbackData()) controller = RENDER[v](slot, fallbackData(), { unavailable: true });
     else slot.innerHTML = ERROR ? errorHTML() : loadingHTML();
     writeHash();
     if (scroll) slot.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -611,8 +624,8 @@
     });
     document.addEventListener("click", (e) => { if (e.target.closest(".tc-retry")) load(); });
     document.addEventListener("keydown", (e) => {
-      if (e.target.closest("input, textarea, [contenteditable]") || e.ctrlKey || e.metaKey || e.altKey) return;
-      if (document.querySelector(".tc-modal")) return;
+      const el = e.target && e.target.closest ? e.target : document.body;
+      if (el.closest("input, textarea, [contenteditable], .leaflet-container") || e.ctrlKey || e.metaKey || e.altKey) return;
       const v = { "1": "H", "2": "V" }[e.key];
       if (v) setVariant(v);
     });
